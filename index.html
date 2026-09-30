@@ -1,0 +1,1592 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ศูนย์ช่วยเหลือและดูแลผู้ป่วยติดเตียง (Bedridden Care Center)</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts - Prompt & Noto Sans Thai -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                        },
+                        medical: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                        },
+                        warm: {
+                            50: '#fff7ed',
+                            100: '#ffedd5',
+                            500: '#f97316',
+                            600: '#ea580c',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Prompt', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: #f8fafc;
+        }
+        /* Custom accessibility adjustments for senior readability */
+        .text-accessible {
+            letter-spacing: 0.02em;
+        }
+        .tab-active {
+            border-bottom: 4px solid #0284c7;
+            color: #0284c7;
+            font-weight: 600;
+        }
+        /* Pulse animation for emergency button */
+        @keyframes pulse-red {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            50% { transform: scale(1.03); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+        }
+        .pulse-emergency {
+            animation: pulse-red 2s infinite;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 text-accessible flex flex-col min-h-screen">
+
+    <!-- Top Emergency Bar -->
+    <div class="bg-red-600 text-white py-2.5 px-4 shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
+            <div class="flex items-center space-x-2 font-medium text-sm md:text-base">
+                <i data-lucide="siren" class="w-6 h-6 animate-bounce">
+                </i>
+                <span>เจ็บป่วยฉุกเฉิน / กู้ชีพ โทรฟรี 24 ชม.:</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="tel:1669" class="bg-white text-red-600 px-4 py-1.5 rounded-full font-bold text-lg md:text-xl shadow hover:bg-red-50 flex items-center gap-2 pulse-emergency">
+                    <i data-lucide="phone-call" class="w-5 h-5"></i>
+                    1669 (กู้ชีพ)
+                </a>
+                <a href="tel:1330" class="bg-red-700 hover:bg-red-800 text-white px-3 py-1.5 rounded-full font-medium text-xs md:text-sm flex items-center gap-1">
+                    <i data-lucide="phone" class="w-4 h-4"></i>
+                    1330 (สปสช.)
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation Bar -->
+    <header class="bg-white shadow-sm border-b border-slate-200 sticky top-[52px] z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <!-- Logo -->
+                <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('home')">
+                    <div class="bg-medical-500 text-white p-3 rounded-2xl shadow-md">
+                        <i data-lucide="heart-handshake" class="w-8 h-8"></i>
+                    </div>
+                    <div>
+                        <span class="text-xl md:text-2xl font-bold text-slate-800 leading-tight block">ศูนย์ช่วยเหลือผู้ป่วยติดเตียง</span>
+                        <span class="text-xs md:text-sm text-slate-500">Bedridden Patient Care & Support Center</span>
+                    </div>
+                </div>
+
+                <!-- Accessibility Font Size Controller & Quick Search Trigger -->
+                <div class="hidden lg:flex items-center gap-4">
+                    <div class="flex items-center bg-slate-100 rounded-lg p-1 text-slate-600 text-sm">
+                        <span class="px-2 text-xs text-slate-500 font-medium">ขนาดตัวหนังสือ:</span>
+                        <button onclick="changeFontSize('small')" class="px-2 py-1 rounded hover:bg-white font-medium">ก</button>
+                        <button onclick="changeFontSize('normal')" class="px-2 py-1 rounded hover:bg-white font-bold text-base bg-white shadow-sm">ก</button>
+                        <button onclick="changeFontSize('large')" class="px-2 py-1 rounded hover:bg-white font-extrabold text-lg">ก</button>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="flex items-center md:hidden">
+                    <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="p-2 text-slate-600 rounded-lg hover:bg-slate-100 focus:outline-none">
+                        <i data-lucide="menu" class="w-7 h-7"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Links (Desktop) -->
+        <nav class="hidden md:block bg-slate-100 border-t border-slate-200">
+            <div class="max-w-7xl mx-auto px-4 flex space-x-1 overflow-x-auto text-base">
+                <button onclick="switchTab('home')" id="nav-home" class="tab-btn py-3.5 px-4 font-medium hover:text-medical-600 flex items-center gap-2 border-b-4 border-transparent transition">
+                    <i data-lucide="home" class="w-5 h-5"></i> หน้าแรก
+                </button>
+                <button onclick="switchTab('rights')" id="nav-rights" class="tab-btn py-3.5 px-4 font-medium hover:text-medical-600 flex items-center gap-2 border-b-4 border-transparent transition">
+                    <i data-lucide="shield-check" class="w-5 h-5"></i> สิทธิการรักษา & ผ้าอ้อมฟรี
+                </button>
+                <button onclick="switchTab('guides')" id="nav-guides" class="tab-btn py-3.5 px-4 font-medium hover:text-medical-600 flex items-center gap-2 border-b-4 border-transparent transition">
+                    <i data-lucide="book-open" class="w-5 h-5"></i> คู่มือการดูแล
+                </button>
+                <button onclick="switchTab('supplies')" id="nav-supplies" class="tab-btn py-3.5 px-4 font-medium hover:text-medical-600 flex items-center gap-2 border-b-4 border-transparent transition">
+                    <i data-lucide="gift" class="w-5 h-5"></i> ขอยืม/รับบริจาคอุปกรณ์
+                </button>
+                <button onclick="switchTab('reminder')" id="nav-reminder" class="tab-btn py-3.5 px-4 font-medium hover:text-medical-600 flex items-center gap-2 border-b-4 border-transparent transition">
+                    <i data-lucide="bell" class="w-5 h-5"></i> ระบบตั้งเวลาเตือนดูแล
+                </button>
+                <button onclick="switchTab('directory')" id="nav-directory" class="tab-btn py-3.5 px-4 font-medium hover:text-medical-600 flex items-center gap-2 border-b-4 border-transparent transition">
+                    <i data-lucide="map-pin" class="w-5 h-5"></i> ศูนย์ช่วยเหลือ & เบอร์โทร
+                </button>
+            </div>
+        </nav>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-slate-200 px-4 py-3 space-y-2">
+            <button onclick="switchTab('home')" class="w-full text-left py-2 px-3 rounded-lg hover:bg-slate-100 flex items-center gap-3 font-medium">
+                <i data-lucide="home" class="w-5 h-5 text-medical-600"></i> หน้าแรก
+            </button>
+            <button onclick="switchTab('rights')" class="w-full text-left py-2 px-3 rounded-lg hover:bg-slate-100 flex items-center gap-3 font-medium">
+                <i data-lucide="shield-check" class="w-5 h-5 text-medical-600"></i> สิทธิการรักษา & ผ้าอ้อมฟรี
+            </button>
+            <button onclick="switchTab('guides')" class="w-full text-left py-2 px-3 rounded-lg hover:bg-slate-100 flex items-center gap-3 font-medium">
+                <i data-lucide="book-open" class="w-5 h-5 text-medical-600"></i> คู่มือการดูแล
+            </button>
+            <button onclick="switchTab('supplies')" class="w-full text-left py-2 px-3 rounded-lg hover:bg-slate-100 flex items-center gap-3 font-medium">
+                <i data-lucide="gift" class="w-5 h-5 text-medical-600"></i> ขอยืม/รับบริจาคอุปกรณ์
+            </button>
+            <button onclick="switchTab('reminder')" class="w-full text-left py-2 px-3 rounded-lg hover:bg-slate-100 flex items-center gap-3 font-medium">
+                <i data-lucide="bell" class="w-5 h-5 text-medical-600"></i> ระบบตั้งเวลาเตือนดูแล
+            </button>
+            <button onclick="switchTab('directory')" class="w-full text-left py-2 px-3 rounded-lg hover:bg-slate-100 flex items-center gap-3 font-medium">
+                <i data-lucide="map-pin" class="w-5 h-5 text-medical-600"></i> ศูนย์ช่วยเหลือ & เบอร์โทร
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Dynamic Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- GLOBAL SEARCH BAR -->
+        <div class="mb-6 bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row items-center gap-3">
+            <div class="relative w-full">
+                <i data-lucide="search" class="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" id="global-search" oninput="handleGlobalSearch(this.value)" placeholder="ค้นหา เช่น ผ้าอ้อมฟรี, แผลกดทับ, เบี้ยพิการ, ยืมเตียง, เบอร์ สปสช. ..." class="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-medical-500 text-slate-700 font-medium">
+            </div>
+            <button onclick="performGlobalSearch()" class="w-full md:w-auto px-6 py-3 bg-medical-600 hover:bg-medical-700 text-white font-semibold rounded-xl shadow-sm flex items-center justify-center gap-2 whitespace-nowrap">
+                <i data-lucide="search" class="w-5 h-5"></i> ค้นหาข้อมูล
+            </button>
+        </div>
+
+        <!-- SEARCH RESULTS PANEL (Hidden by default) -->
+        <div id="search-results-panel" class="hidden mb-8 bg-blue-50 border-2 border-medical-500 rounded-2xl p-6 shadow-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-medical-700 flex items-center gap-2">
+                    <i data-lucide="file-search" class="w-6 h-6"></i> ผลการค้นหาสำหรับ "<span id="search-keyword-display"></span>"
+                </h3>
+                <button onclick="closeSearchResults()" class="text-slate-500 hover:text-red-500 font-bold text-sm bg-white px-3 py-1 rounded-lg border">
+                    ปิด x
+                </button>
+            </div>
+            <div id="search-results-list" class="space-y-3">
+                <!-- Search items populated dynamically -->
+            </div>
+        </div>
+
+        <!-- SECTION 1: HOME / DASHBOARD -->
+        <section id="section-home" class="tab-content">
+            <!-- Hero Banner -->
+            <div class="bg-gradient-to-r from-medical-600 via-medical-500 to-teal-600 rounded-3xl p-6 md:p-10 text-white shadow-xl mb-8 relative overflow-hidden">
+                <div class="relative z-10 max-w-2xl">
+                    <span class="bg-white/20 text-white text-xs md:text-sm px-3 py-1 rounded-full font-medium inline-block mb-3 backdrop-blur-sm">
+                        ศูนย์ข้อมูลและสวัสดิการครบวงจร
+                    </span>
+                    <h1 class="text-2xl md:text-4xl font-extrabold mb-3 leading-tight">
+                        พร้อมเคียงข้าง... ให้การดูแลผู้ป่วยติดเตียงเป็นเรื่องง่ายและเข้าถึงได้
+                    </h1>
+                    <p class="text-slate-100 text-base md:text-lg mb-6 font-light">
+                        รวมข้อมูลสิทธิการรักษา บัตรทอง ขอรับผ้าอ้อมฟรี อุปกรณ์การแพทย์ให้ยืม พร้อมคู่มือการดูแล และระบบตั้งเวลาเตือนกิจกรรมสำหรับผู้ดูแล
+                    </p>
+                    <div class="flex flex-wrap gap-3">
+                        <button onclick="switchTab('rights')" class="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold px-5 py-3 rounded-xl shadow-lg transition flex items-center gap-2 text-base">
+                            <i data-lucide="sparkles" class="w-5 h-5"></i> เช็กสิทธิรับผ้าอ้อมฟรี
+                        </button>
+                        <button onclick="switchTab('guides')" class="bg-white/10 hover:bg-white/20 border border-white/30 text-white font-medium px-5 py-3 rounded-xl backdrop-blur-sm transition flex items-center gap-2">
+                            <i data-lucide="book-open" class="w-5 h-5"></i> อ่านคู่มือการดูแล
+                        </button>
+                    </div>
+                </div>
+                <div class="hidden lg:block absolute right-8 top-1/2 -translate-y-1/2 opacity-20">
+                    <i data-lucide="heart-handshake" class="w-80 h-80"></i>
+                </div>
+            </div>
+
+            <!-- Quick Action Cards Grid -->
+            <h2 class="text-2xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+                <i data-lucide="layout-grid" class="w-6 h-6 text-medical-600"></i> บริการหลักสำหรับผู้ดูแล
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
+                <div onclick="switchTab('rights')" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md hover:border-medical-500 transition cursor-pointer group">
+                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition">
+                        <i data-lucide="shield-check" class="w-7 h-7"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-1">สิทธิบัตรทอง & ผ้าอ้อมฟรี</h3>
+                    <p class="text-slate-600 text-sm">ข้อมูลสิทธิผ้าอ้อมผู้ใหญ่และแผ่นรองซับ พร้อมช่องทางตรวจสอบสิทธิ</p>
+                </div>
+
+                <div onclick="switchTab('supplies')" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md hover:border-brand-500 transition cursor-pointer group">
+                    <div class="w-12 h-12 bg-brand-100 text-brand-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition">
+                        <i data-lucide="gift" class="w-7 h-7"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-1">ยืมอุปกรณ์การแพทย์</h3>
+                    <p class="text-slate-600 text-sm">ข้อมูลช่องทางประสานหน่วยงานในพื้นที่เพื่อสอบถามการยืมหรือขอรับอุปกรณ์การแพทย์</p>
+                </div>
+
+                <div onclick="switchTab('reminder')" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md hover:border-amber-500 transition cursor-pointer group">
+                    <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition">
+                        <i data-lucide="clock" class="w-7 h-7"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-1">ระบบเตือนพลิกตัว/ป้อนยา</h3>
+                    <p class="text-slate-600 text-sm">ตั้งเวลาแจ้งเตือนการเปลี่ยนท่าตามแผนการดูแล เวลาป้อนยา และอาหารทางสายยาง</p>
+                </div>
+
+                <div onclick="switchTab('guides')" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md hover:border-purple-500 transition cursor-pointer group">
+                    <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition">
+                        <i data-lucide="activity" class="w-7 h-7"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-1">คู่มือป้องกันแผลกดทับ</h3>
+                    <p class="text-slate-600 text-sm">เทคนิคการทำความสะอาด กายภาพบำบัด และการดูแลจิตใจผู้ดูแล</p>
+                </div>
+            </div>
+
+            <!-- Latest News & Assistance Projects -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
+                <!-- Left 2 Cols: News -->
+                <div class="lg:col-span-2">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2">
+                            <i data-lucide="newspaper" class="w-6 h-6 text-medical-600"></i> ข่าวสารและโครงการช่วยเหลือล่าสุด
+                        </h2>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-4 items-start">
+                            <div class="bg-medical-100 text-medical-700 p-3 rounded-xl flex-shrink-0 text-center w-full md:w-28">
+                                <span class="block font-bold text-2xl">2026</span>
+                                <span class="text-xs uppercase font-medium">อัปเดตสิทธิ</span>
+                            </div>
+                            <div class="flex-grow">
+                                <span class="inline-block bg-brand-100 text-brand-700 text-xs px-2.5 py-0.5 rounded-full font-bold mb-1">โครงการ สปสช.</span>
+                                <h3 class="font-bold text-lg text-slate-800 mb-1 hover:text-medical-600 cursor-pointer" onclick="switchTab('rights')">สิทธิประโยชน์ผ้าอ้อมผู้ใหญ่และแผ่นรองซับ</h3>
+                                <p class="text-slate-600 text-sm mb-2">ผู้ที่มีภาวะพึ่งพิงหรือมีปัญหาการกลั้นปัสสาวะ/อุจจาระ ควรให้หน่วยบริการหรือ อปท. ในพื้นที่ประเมินคุณสมบัติและตรวจสอบสิทธิ ก่อนขอรับการสนับสนุนผ้าอ้อมหรือแผ่นรองซับ</p>
+                                <span class="text-xs text-slate-400">ตรวจสอบสิทธิปัจจุบันได้ที่ สปสช. 1330 หรือหน่วยบริการ/อปท. ในพื้นที่</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right 1 Col: Emergency Numbers Summary Card -->
+                <div>
+                    <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-3xl p-6 shadow-xl sticky top-36">
+                        <h3 class="text-xl font-bold mb-4 flex items-center gap-2 border-b border-slate-700 pb-3 text-amber-400">
+                            <i data-lucide="phone-forwarded" class="w-6 h-6"></i> เบอร์สายด่วนสำคัญ
+                        </h3>
+                        <ul class="space-y-4">
+                            <li class="flex justify-between items-center bg-slate-800/80 p-3 rounded-xl border border-slate-700">
+                                <div>
+                                    <span class="block text-xs text-slate-400">เจ็บป่วยฉุกเฉิน / กู้ชีพ</span>
+                                    <span class="font-bold text-lg text-red-400">1669</span>
+                                </div>
+                                <a href="tel:1669" class="bg-red-600 hover:bg-red-500 text-white p-2 rounded-lg">
+                                    <i data-lucide="phone" class="w-5 h-5"></i>
+                                </a>
+                            </li>
+                            <li class="flex justify-between items-center bg-slate-800/80 p-3 rounded-xl border border-slate-700">
+                                <div>
+                                    <span class="block text-xs text-slate-400">สายด่วน สปสช. (บัตรทอง)</span>
+                                    <span class="font-bold text-lg text-sky-400">1330</span>
+                                </div>
+                                <a href="tel:1330" class="bg-sky-600 hover:bg-sky-500 text-white p-2 rounded-lg">
+                                    <i data-lucide="phone" class="w-5 h-5"></i>
+                                </a>
+                            </li>
+                            <li class="flex justify-between items-center bg-slate-800/80 p-3 rounded-xl border border-slate-700">
+                                <div>
+                                    <span class="block text-xs text-slate-400">ศูนย์ช่วยเหลือสังคม (กระทรวง พม.)</span>
+                                    <span class="font-bold text-lg text-amber-400">1300</span>
+                                </div>
+                                <a href="tel:1300" class="bg-amber-600 hover:bg-amber-500 text-white p-2 rounded-lg">
+                                    <i data-lucide="phone" class="w-5 h-5"></i>
+                                </a>
+                            </li>
+                            <li class="flex justify-between items-center bg-slate-800/80 p-3 rounded-xl border border-slate-700">
+                                <div>
+                                    <span class="block text-xs text-slate-400">สายด่วนสุขภาพจิต</span>
+                                    <span class="font-bold text-lg text-emerald-400">1323</span>
+                                </div>
+                                <a href="tel:1323" class="bg-emerald-600 hover:bg-emerald-500 text-white p-2 rounded-lg">
+                                    <i data-lucide="phone" class="w-5 h-5"></i>
+                                </a>
+                            </li>
+                        </ul>
+                        <button onclick="switchTab('directory')" class="w-full mt-5 bg-slate-700 hover:bg-slate-600 text-slate-200 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2">
+                            <i data-lucide="search" class="w-4 h-4"></i> ค้นหา รพ.สต. ในพื้นที่ของคุณ
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: MEDICAL RIGHTS & BENEFITS -->
+        <section id="section-rights" class="tab-content hidden">
+            <div class="mb-6">
+                <h1 class="text-3xl font-extrabold text-slate-800 mb-2 flex items-center gap-2">
+                    <i data-lucide="shield-check" class="w-8 h-8 text-medical-600"></i> สิทธิการรักษาและสิทธิประโยชน์ผู้ป่วยติดเตียง
+                </h1>
+                <p class="text-slate-600 text-lg">รวบรวมข้อมูลสิทธิพื้นฐาน สวัสดิการ และช่องทางประสานบริการสำหรับผู้ป่วยที่มีภาวะพึ่งพิง</p>
+                <div class="mt-3 bg-blue-50 border border-blue-200 rounded-xl p-3 text-sm text-slate-700">
+                    <strong>หมายเหตุ:</strong> เกณฑ์ภาวะพึ่งพิงในระบบ Long-Term Care (LTC) ใช้ Barthel ADL ≤ 11 คะแนน ส่วนสิทธิผ้าอ้อม/แผ่นรองซับและอุปกรณ์ต่าง ๆ ให้ตรวจสอบคุณสมบัติและความพร้อมกับหน่วยบริการหรือ อปท. ในพื้นที่อีกครั้ง
+                </div>
+            </div>
+
+            <!-- Diaper Project Special Card -->
+            <div class="bg-gradient-to-br from-amber-50 to-orange-100 border-2 border-amber-300 rounded-3xl p-6 md:p-8 shadow-md mb-8">
+                <div class="flex flex-col md:flex-row gap-6 items-start">
+                    <div class="bg-amber-500 text-white p-4 rounded-2xl flex-shrink-0">
+                        <i data-lucide="gift" class="w-12 h-12"></i>
+                    </div>
+                    <div>
+                        <span class="bg-amber-200 text-amber-900 font-bold text-xs px-3 py-1 rounded-full uppercase tracking-wider mb-2 inline-block">โครงการยอดนิยม</span>
+                        <h2 class="text-2xl font-bold text-amber-950 mb-2">โครงการสนับสนุนผ้าอ้อมผู้ใหญ่และแผ่นรองซับฟรี (สปสช. / อปท.)</h2>
+                        <p class="text-slate-700 mb-4 text-base leading-relaxed">
+                            มีสิทธิประโยชน์สนับสนุนผ้าอ้อมผู้ใหญ่และแผ่นรองซับสำหรับกลุ่มเป้าหมายตามหลักเกณฑ์ของระบบหลักประกันสุขภาพ โดยการรับบริการขึ้นกับการประเมินและการดำเนินงานของหน่วยบริการหรือกองทุนในพื้นที่
+                        </p>
+                        <div class="bg-white/80 backdrop-blur-sm p-4 rounded-xl border border-amber-200 space-y-2 mb-4">
+                            <h4 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                                <i data-lucide="check-circle" class="w-5 h-5 text-amber-600"></i> คุณสมบัติผู้มีสิทธิรับผ้าอ้อมฟรี:
+                            </h4>
+                            <ul class="list-disc list-inside text-sm text-slate-700 space-y-1 pl-2">
+                                <li>ผู้ที่มีภาวะพึ่งพิงหรือมีความจำเป็นต้องใช้ผ้าอ้อม/แผ่นรองซับตามการประเมินของบุคลากรสุขภาพ</li>
+                                <li>ผู้ที่มีปัญหาการกลั้นปัสสาวะหรืออุจจาระ ควรได้รับการประเมินความจำเป็นตามหลักเกณฑ์ที่เกี่ยวข้อง</li>
+                                <li>สิทธิและช่องทางรับบริการอาจแตกต่างกันตามสิทธิการรักษาและพื้นที่ กรุณาตรวจสอบกับ สปสช. 1330 หรือหน่วยบริการในพื้นที่</li>
+                            </ul>
+                        </div>
+                        <div class="flex flex-wrap gap-3">
+                            <a href="tel:1330" class="bg-amber-600 hover:bg-amber-700 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2">
+                                <i data-lucide="phone" class="w-5 h-5"></i> สอบถาม สปสช. โทร 1330
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Medical Rights Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <!-- Card 1: บัตรทอง -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center font-bold mb-3">1</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">สิทธิบัตรทอง (30 บาท)</h3>
+                    <p class="text-slate-600 text-sm mb-4">ครอบคลุมบริการ Long-Term Care (LTC), มีทีมพยาบาลและผู้ดูแล (Caregiver) ลงเยี่ยมบ้าน เยี่ยมทำแผล ปล่อยสายยางเปลี่ยนสายปัสสาวะฟรี</p>
+                    <div class="text-xs text-slate-500 font-medium bg-slate-50 p-3 rounded-lg">
+                        ยื่นเรื่องที่: รพ.สต. หรือ ศูนย์บริการสาธารณสุข ใกล้บ้าน
+                    </div>
+                </div>
+
+                <!-- Card 2: เบี้ยความพิการ -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <div class="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center font-bold mb-3">2</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">เงินอุดหนุน & เบี้ยความพิการ</h3>
+                    <p class="text-slate-600 text-sm mb-4">ผู้ป่วยติดเตียงสามารถยื่นทำบัตรประจำตัวคนพิการ (ประเภท 3 ทางการเคลื่อนไหว) เพื่อรับเงินเบี้ยคนพิการ 800 - 1,000 บาท/เดือน</p>
+                    <div class="text-xs text-slate-500 font-medium bg-slate-50 p-3 rounded-lg">
+                        ยื่นเรื่องที่: อบต. / เทศบาล / สำนักงานเขต กทม.
+                    </div>
+                </div>
+
+                <!-- Card 3: สิทธิข้าราชการ/ประกันสังคม -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <div class="w-10 h-10 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center font-bold mb-3">3</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">ประกันสังคม & ข้าราชการ</h3>
+                    <p class="text-slate-600 text-sm mb-4">สามารถเบิกอุปกรณ์การแพทย์บางส่วนได้ตามใบสั่งแพทย์ เช่น เครื่องผลิตออกซิเจน เตียงผู้ป่วย และกายอุปกรณ์เสริม</p>
+                    <div class="text-xs text-slate-500 font-medium bg-slate-50 p-3 rounded-lg">
+                        ยื่นเรื่องที่: โรงพยาบาลตามสิทธิรักษาต้นสังกัด
+                    </div>
+                </div>
+            </div>
+
+            <!-- Steps Section -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                <h3 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <i data-lucide="list-checks" class="w-6 h-6 text-medical-600"></i> ขั้นตอนการลงทะเบียนขอรับสิทธิผ้าอ้อมและอุปกรณ์ฟรี
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                        <span class="text-medical-600 font-extrabold text-lg block mb-1">ขั้นตอนที่ 1</span>
+                        <h4 class="font-bold text-slate-800 text-sm mb-1">เตรียมเอกสาร</h4>
+                        <p class="text-xs text-slate-600">สำเนาบัตรประชาชนผู้ป่วย, สำเนาทะเบียนบ้าน, บัตรประชาชนผู้ดูแล</p>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                        <span class="text-medical-600 font-extrabold text-lg block mb-1">ขั้นตอนที่ 2</span>
+                        <h4 class="font-bold text-slate-800 text-sm mb-1">ติดต่อหน่วยงาน</h4>
+                        <p class="text-xs text-slate-600">แจ้งเรื่องที่ รพ.สต., ศูนย์สาธารณสุข หรือ เทศบาล/อบต. ในพื้นที่พักอาศัยจริง</p>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                        <span class="text-medical-600 font-extrabold text-lg block mb-1">ขั้นตอนที่ 3</span>
+                        <h4 class="font-bold text-slate-800 text-sm mb-1">การประเมินอาการ</h4>
+                        <p class="text-xs text-slate-600">ทีม Care Manager หรือ อสม. ลงพื้นที่เยี่ยมบ้านเพื่อประเมินค่า ADL</p>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                        <span class="text-medical-600 font-extrabold text-lg block mb-1">ขั้นตอนที่ 4</span>
+                        <h4 class="font-bold text-slate-800 text-sm mb-1">อนุมัติและรับมอบ</h4>
+                        <p class="text-xs text-slate-600">รับผ้าอ้อมหรืออุปกรณ์การแพทย์ส่งตรงถึงบ้านตามรอบจัดส่งของพื้นที่</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: ESSENTIAL CARE GUIDES -->
+        <section id="section-guides" class="tab-content hidden">
+            <div class="mb-6">
+                <h1 class="text-3xl font-extrabold text-slate-800 mb-2 flex items-center gap-2">
+                    <i data-lucide="book-open" class="w-8 h-8 text-medical-600"></i> คู่มือการดูแลผู้ป่วยติดเตียงที่จำเป็น
+                </h1>
+                <p class="text-slate-600 text-lg">แนวทางพื้นฐานเพื่อสนับสนุนการดูแลที่บ้านและลดความเสี่ยงภาวะแทรกซ้อน</p>
+                <div class="mt-3 bg-amber-50 border border-amber-200 rounded-xl p-3 text-sm text-slate-700">
+                    <strong>ข้อควรทราบ:</strong> เนื้อหานี้เป็นข้อมูลทั่วไป ไม่ทดแทนการประเมินหรือคำสั่งจากแพทย์ พยาบาล หรือนักกายภาพบำบัด ผู้ดูแลควรได้รับการสอนทักษะเฉพาะก่อนปฏิบัติ โดยเฉพาะการให้อาหารทางสายและการดูดเสมหะ
+                </div>
+            </div>
+
+            <!-- Guide Category Tabs / Accordion Buttons -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                
+                <!-- Guide 1: Pressure Ulcer -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+                    <div class="p-6 bg-red-50 border-b border-red-100 flex items-center gap-4">
+                        <div class="bg-red-500 text-white p-3 rounded-xl">
+                            <i data-lucide="user-check" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-slate-800">การพลิกตัว & ป้องกันแผลกดทับ</h3>
+                            <span class="text-xs text-red-600 font-medium">เรื่องสำคัญอันดับ 1</span>
+                        </div>
+                    </div>
+                    <div class="p-6 text-sm text-slate-600 space-y-3 flex-grow">
+                        <p><strong>1. เปลี่ยนท่าอย่างสม่ำเสมอ:</strong> ช่วยเปลี่ยนท่าผู้ป่วยเป็นระยะ โดยปรับความถี่ตามสภาพผิวหนัง ความสามารถในการเคลื่อนไหว ภาวะสุขภาพ และแผนการดูแลของบุคลากรสุขภาพ ไม่ควรปล่อยให้อยู่ท่าเดิมเป็นเวลานาน</p>
+                        <p><strong>2. ลดแรงกดและแรงเสียดสี:</strong> ใช้ที่นอนหรืออุปกรณ์กระจายแรงกดที่เหมาะสมตามการประเมิน และตรวจผิวหนังบริเวณปุ่มกระดูกเป็นประจำ</p>
+                        <p><strong>3. เมื่อพบแผลกดทับ:</strong> ควรให้พยาบาลหรือบุคลากรสุขภาพประเมินระยะของแผลและวางแผนการทำแผลที่เหมาะสม หลีกเลี่ยงการใช้สารที่อาจระคายเคืองแผลโดยไม่ได้รับคำแนะนำ</p>
+                    </div>
+                    <div class="p-4 bg-slate-50 border-t border-slate-100">
+                        <button onclick="openGuideModal('pressure-ulcer')" class="w-full bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 py-2 rounded-xl text-xs font-bold transition">
+                            อ่านวิธีทำแผลอย่างละเอียด
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Guide 2: Feeding & Suctioning -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+                    <div class="p-6 bg-blue-50 border-b border-blue-100 flex items-center gap-4">
+                        <div class="bg-blue-500 text-white p-3 rounded-xl">
+                            <i data-lucide="utensils" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-slate-800">การให้อาหารทางสายยาง & ดูดเสมหะ</h3>
+                            <span class="text-xs text-blue-600 font-medium">ความปลอดภัยและโภชนาการ</span>
+                        </div>
+                    </div>
+                    <div class="p-6 text-sm text-slate-600 space-y-3 flex-grow">
+                        <p><strong>1. จัดท่าขณะให้อาหาร:</strong> หากไม่มีข้อห้ามทางการแพทย์ ให้ยกศีรษะประมาณ 30–45 องศาระหว่างให้อาหารทางสาย เพื่อลดความเสี่ยงการสำลัก และปฏิบัติตามแผนการดูแลของทีมสุขภาพ</p>
+                        <p><strong>2. ตรวจความพร้อมก่อนให้อาหาร:</strong> ตรวจตำแหน่งและสภาพของสายให้อาหารตามวิธีที่ทีมสุขภาพสอน ไม่ใช้ค่าอาหารค้างในกระเพาะเพียงค่าเดียวเพื่อตัดสินใจหยุดหรือเลื่อนอาหาร หากมีอาการผิดปกติ เช่น อาเจียน ท้องอืดมาก ไอหรือหายใจลำบากระหว่างให้อาหาร ให้หยุดและติดต่อบุคลากรสุขภาพ</p>
+                        <p><strong>3. การดูดเสมหะ:</strong> ควรทำเมื่อมีข้อบ่งชี้และโดยผู้ดูแลที่ได้รับการสอนวิธีจากบุคลากรสุขภาพ ใช้อุปกรณ์และแรงดูดตามคำแนะนำ โดยช่วงที่ใช้แรงดูดแต่ละครั้งไม่ควรนานเกินประมาณ 10–15 วินาที และหยุดทันทีหากผู้ป่วยมีอาการผิดปกติ</p>
+                    </div>
+                    <div class="p-4 bg-slate-50 border-t border-slate-100">
+                        <button onclick="openGuideModal('feeding')" class="w-full bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 py-2 rounded-xl text-xs font-bold transition">
+                            อ่านเทคนิคเพิ่มเติม
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Guide 3: Hygiene & Toilet -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+                    <div class="p-6 bg-emerald-50 border-b border-emerald-100 flex items-center gap-4">
+                        <div class="bg-emerald-500 text-white p-3 rounded-xl">
+                            <i data-lucide="sparkles" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-slate-800">การเช็ดตัว & การขับถ่าย</h3>
+                            <span class="text-xs text-emerald-600 font-medium">สุขอนามัยและความสบายตัว</span>
+                        </div>
+                    </div>
+                    <div class="p-6 text-sm text-slate-600 space-y-3 flex-grow">
+                        <p><strong>1. การทำความสะอาดผิว:</strong> ใช้ซับน้ำอุ่นเช็ดจากส่วนบนลงล่าง และเช็ดให้แห้งสนิททันทีเพื่อป้องกันอับชื้น</p>
+                        <p><strong>2. การดูแลหลังขับถ่าย:</strong> ตรวจผ้าอ้อมเป็นระยะและเปลี่ยนเมื่อเปียกหรือเปื้อน ทำความสะอาดผิวอย่างอ่อนโยนและทำให้แห้ง หากมีความเสี่ยงต่อผิวหนังอักเสบอาจใช้ผลิตภัณฑ์ปกป้องผิวตามคำแนะนำของบุคลากรสุขภาพ</p>
+                        <p><strong>3. การดูแลสายสวนปัสสาวะ:</strong> รักษาระบบระบายปัสสาวะให้ปิดและไหลได้สะดวก ไม่ให้สายหักพับ และวางถุงปัสสาวะต่ำกว่าระดับกระเพาะปัสสาวะโดยไม่วางถุงบนพื้น ล้างมือก่อนและหลังสัมผัสระบบ</p>
+                    </div>
+                    <div class="p-4 bg-slate-50 border-t border-slate-100">
+                        <button onclick="openGuideModal('hygiene')" class="w-full bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 py-2 rounded-xl text-xs font-bold transition">
+                            อ่านเทคนิคเพิ่มเติม
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Guide 4: Physical Therapy -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+                    <div class="p-6 bg-purple-50 border-b border-purple-100 flex items-center gap-4">
+                        <div class="bg-purple-500 text-white p-3 rounded-xl">
+                            <i data-lucide="activity" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-slate-800">การฟื้นฟู & กายภาพบำบัด</h3>
+                            <span class="text-xs text-purple-600 font-medium">ป้องกันข้อติดแข็ง</span>
+                        </div>
+                    </div>
+                    <div class="p-6 text-sm text-slate-600 space-y-3 flex-grow">
+                        <p><strong>1. การบริหารข้อต่อ (ROM Exercise):</strong> ขยับข้อต่ออย่างช้า ๆ ภายในช่วงการเคลื่อนไหวที่ผู้ป่วยทำได้โดยไม่เจ็บ จำนวนครั้งและความถี่ควรปรับตามสภาพผู้ป่วยและคำแนะนำของนักกายภาพบำบัดหรือทีมสุขภาพ</p>
+                        <p><strong>2. การเคลื่อนไหวและจัดท่า:</strong> ส่งเสริมการเคลื่อนไหวตามความสามารถและจัดท่าให้เหมาะสม หลีกเลี่ยงการนวดบริเวณที่แดง บวม เจ็บ มีแผล หรือสงสัยการอักเสบ/ลิ่มเลือด และขอคำแนะนำจากทีมสุขภาพหากไม่แน่ใจ</p>
+                    </div>
+                    <div class="p-4 bg-slate-50 border-t border-slate-100">
+                        <button onclick="openGuideModal('therapy')" class="w-full bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 py-2 rounded-xl text-xs font-bold transition">
+                            อ่านเทคนิคเพิ่มเติม
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Guide 5: Caregiver Mental Health -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col md:col-span-2">
+                    <div class="p-6 bg-amber-50 border-b border-amber-100 flex items-center gap-4">
+                        <div class="bg-amber-500 text-white p-3 rounded-xl">
+                            <i data-lucide="heart" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-slate-800">สุขภาพจิตของผู้ดูแล (Caregiver Burnout)</h3>
+                            <span class="text-xs text-amber-600 font-medium">ดูแลผู้ป่วยแล้ว อย่าลืมดูแลตัวเอง</span>
+                        </div>
+                    </div>
+                    <div class="p-6 text-sm text-slate-600 space-y-3 flex-grow">
+                        <p>การดูแลผู้ป่วยติดเตียงเป็นงานที่เหน็ดเหนื่อยทั้งกายและใจ อาจเกิดภาวะหมดไฟ (Burnout Syndrome) ได้ง่าย:</p>
+                        <ul class="list-disc list-inside space-y-1 pl-2">
+                            <li><strong>สลับกะพักผ่อน:</strong> พูดคุยขอความช่วยเหลือจากสมาชิกคนอื่นในครอบครัว เพื่อให้มีเวลาพักผ่อนอย่างน้อย 2-3 ชม./วัน</li>
+                            <li><strong>อย่าเก็บความเครียดไว้คนเดียว:</strong> ปรึกษาสายด่วนสุขภาพจิต โทร 1323 (ฟรีตลอด 24 ชั่วโมง)</li>
+                            <li><strong>เข้ากลุ่มผู้ดูแล:</strong> พูดคุยแลกเปลี่ยนประสบการณ์กับผู้ดูแลท่านอื่นๆ เพื่อกำลังใจ</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION 4: DONATIONS & FREE SUPPLIES -->
+        <section id="section-supplies" class="tab-content hidden">
+            <div class="mb-6">
+                <h1 class="text-3xl font-extrabold text-slate-800 mb-2 flex items-center gap-2">
+                    <i data-lucide="gift" class="w-8 h-8 text-brand-600"></i> ศูนย์ยืมอุปกรณ์ทางการแพทย์ & การรับบริจาค
+                </h1>
+                <p class="text-slate-600 text-lg">รายการสิ่งของที่เปิดให้ยืม/รับฟรี และช่องทางสำหรับผู้ที่ต้องการบริจาคส่งต่อของใช้</p>
+            </div>
+
+            <!-- Tabs inside Supplies -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm mb-8">
+                <div class="flex border-b border-slate-200 mb-6 gap-4">
+                    <button id="supply-tab-1" onclick="switchSupplySubTab(1)" class="pb-3 font-bold text-medical-600 border-b-2 border-medical-600 flex items-center gap-2">
+                        <i data-lucide="package" class="w-5 h-5"></i> รายการอุปกรณ์ที่มีให้ยืม/ขอรับ
+                    </button>
+                    <button id="supply-tab-3" onclick="switchSupplySubTab(3)" class="pb-3 font-bold text-slate-500 border-b-2 border-transparent hover:text-medical-600 flex items-center gap-2">
+                        <i data-lucide="heart-handshake" class="w-5 h-5"></i> บริจาคอุปกรณ์ส่งต่อผู้ป่วย
+                    </button>
+                </div>
+
+                <!-- Subtab 1: Available items -->
+                <div id="supply-content-1">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Item 1 -->
+                        <div class="border border-slate-200 rounded-xl p-4 flex flex-col justify-between">
+                            <div>
+                                <span class="bg-brand-100 text-brand-700 text-xs px-2.5 py-1 rounded-full font-bold mb-2 inline-block">ยืมฟรี</span>
+                                <h4 class="font-bold text-lg text-slate-800">เตียงผู้ป่วยมือหมุน / ไฟฟ้า</h4>
+                                <p class="text-slate-600 text-xs my-2">เตียงปรับระดับหัว-ท้ายได้ ช่วยความสะดวกในการปรับท่านอนและป้อนอาหาร</p>
+                                <span class="text-xs text-slate-500 block">สถานะ: <strong class="text-emerald-600">กรุณาตรวจสอบกับหน่วยงานในพื้นที่</strong></span>
+                            </div>
+                            <button onclick="switchTab(\'directory\')" class="mt-4 w-full bg-medical-600 hover:bg-medical-700 text-white text-sm font-bold py-2 rounded-lg">ยื่นขอยืมเตียง</button>
+                        </div>
+
+                        <!-- Item 2 -->
+                        <div class="border border-slate-200 rounded-xl p-4 flex flex-col justify-between">
+                            <div>
+                                <span class="bg-brand-100 text-brand-700 text-xs px-2.5 py-1 rounded-full font-bold mb-2 inline-block">ยืมฟรี</span>
+                                <h4 class="font-bold text-lg text-slate-800">เครื่องผลิตออกซิเจน 5-10 ลิตร</h4>
+                                <p class="text-slate-600 text-xs my-2">สำหรับผู้ป่วยที่มีปัญหาภาวะหายใจลำบาก หรือขาดออกซิเจนตามแพทย์สั่ง</p>
+                                <span class="text-xs text-slate-500 block">สถานะ: <strong class="text-emerald-600">กรุณาตรวจสอบกับหน่วยงานในพื้นที่</strong></span>
+                            </div>
+                            <button onclick="switchTab(\'directory\')" class="mt-4 w-full bg-medical-600 hover:bg-medical-700 text-white text-sm font-bold py-2 rounded-lg">ยื่นขอยืมเครื่อง</button>
+                        </div>
+
+                        <!-- Item 3 -->
+                        <div class="border border-slate-200 rounded-xl p-4 flex flex-col justify-between">
+                            <div>
+                                <span class="bg-amber-100 text-amber-700 text-xs px-2.5 py-1 rounded-full font-bold mb-2 inline-block">แจกฟรี</span>
+                                <h4 class="font-bold text-lg text-slate-800">ชุดผ้าอ้อมผู้ใหญ่ & แผ่นรองซับ</h4>
+                                <p class="text-slate-600 text-xs my-2">การสนับสนุนขึ้นกับสิทธิ หลักเกณฑ์ และความพร้อมของหน่วยงานในแต่ละพื้นที่</p>
+                                <span class="text-xs text-slate-500 block">สถานะ: <strong class="text-emerald-600">กรุณาตรวจสอบสิทธิและความพร้อมในพื้นที่</strong></span>
+                            </div>
+                            <button onclick="switchTab(\'directory\')" class="mt-4 w-full bg-medical-600 hover:bg-medical-700 text-white text-sm font-bold py-2 rounded-lg">ขอรับผ้าอ้อมฟรี</button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Subtab 3: Donation Information -->
+                <div id="supply-content-3" class="hidden text-center max-w-xl mx-auto py-6">
+                    <div class="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="heart" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">ร่วมส่งต่ออุปกรณ์ที่ไม่ได้ใช้งานแล้ว</h3>
+                    <p class="text-slate-600 text-sm mb-6">หากท่านมีเตียง รถเข็น เครื่องผลิตออกซิเจน หรือผ้าอ้อมผู้ใหญ่สภาพดี ต้องการบริจาคส่งต่อให้ผู้ป่วยติดเตียงที่ขาดแคลน</p>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-left space-y-2 mb-6">
+                        <p class="text-sm font-bold text-slate-800">จุดรับบริจาคหลัก:</p>
+                        <p class="text-xs text-slate-600">โปรดสอบถาม รพ.สต. โรงพยาบาล หรือองค์กรปกครองส่วนท้องถิ่นในพื้นที่เกี่ยวกับจุดรับบริจาคหรือบริการที่มีอยู่จริง</p>
+                        <p class="text-sm font-bold text-slate-800 pt-2">ติดต่อทีมงานส่งรถรับถึงบ้าน:</p>
+                        <p class="text-xs text-slate-600">กรุณาติดต่อหน่วยงานในพื้นที่โดยตรง หรือสอบถามข้อมูลสิทธิสุขภาพที่ สปสช. 1330</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION 5: CARE REMINDER TOOL -->
+        <section id="section-reminder" class="tab-content hidden">
+            <div class="mb-6">
+                <h1 class="text-3xl font-extrabold text-slate-800 mb-2 flex items-center gap-2">
+                    <i data-lucide="bell" class="w-8 h-8 text-amber-500"></i> ระบบตั้งเวลาแจ้งเตือนกิจกรรมดูแลผู้ป่วย
+                </h1>
+                <p class="text-slate-600 text-lg">ช่วยเตือนผู้ดูแลไม่ให้ลืมเวลาสำคัญ เช่น พลิกตัว ป้อนยา ให้อาหารสายยาง หรือเปลี่ยนผ้าอ้อม</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Reminder Form -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <i data-lucide="plus-circle" class="w-5 h-5 text-medical-600"></i> เพิ่มรายการแจ้งเตือนใหม่
+                    </h3>
+                    <form onsubmit="addReminder(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">ชื่อกิจกรรม</label>
+                            <input type="text" id="rem-title" required placeholder="เช่น พลิกตัวนอนตะแคงซ้าย, ป้อนยาหลังอาหาร" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-medical-500 outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">หมวดหมู่</label>
+                            <select id="rem-category" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-medical-500 outline-none">
+                                <option value="turning">พลิกตัวป้องกันแผลกดทับ</option>
+                                <option value="medicine">ทานยา / ป้อนยา</option>
+                                <option value="feeding">ให้อาหารทางสายยาง</option>
+                                <option value="hygiene">เปลี่ยนผ้าอ้อม / เช็ดตัว</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">เวลาที่ต้องการให้เตือน</label>
+                            <input type="time" id="rem-time" required class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-medical-500 outline-none">
+                        </div>
+
+                        <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 rounded-xl shadow transition flex items-center justify-center gap-2">
+                            <i data-lucide="bell-plus" class="w-5 h-5"></i> บันทึกการแจ้งเตือน
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Active Reminders List -->
+                <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                            <i data-lucide="clock" class="w-5 h-5 text-medical-600"></i> ตารางแจ้งเตือนวันนี้
+                        </h3>
+                        <span id="current-clock" class="text-sm font-bold text-medical-600 bg-medical-50 px-3 py-1 rounded-full"></span>
+                    </div>
+
+                    <div id="reminder-list" class="space-y-3">
+                        <!-- Dynamic Reminders populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 6: DIRECTORY & NETWORK -->
+        <section id="section-directory" class="tab-content hidden">
+            <div class="mb-6">
+                <h1 class="text-3xl font-extrabold text-slate-800 mb-2 flex items-center gap-2">
+                    <i data-lucide="map-pin" class="w-8 h-8 text-medical-600"></i> แหล่งสนับสนุน เบอร์โทร และที่อยู่ศูนย์ช่วยเหลือ
+                </h1>
+                <p class="text-slate-600 text-lg">ค้นหาแหล่งสนับสนุนผู้ป่วยติดเตียงใน 14 จังหวัดภาคใต้</p>
+            </div>
+
+            <!-- Filter and Search Directory -->
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm mb-6 flex flex-col md:flex-row gap-4">
+                <div class="relative flex-grow">
+                    <i data-lucide="search" class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" id="directory-search" oninput="filterDirectory()" placeholder="ค้นหา จังหวัด อำเภอ หน่วยงาน อุปกรณ์ ฟื้นฟู LTC..." class="w-full pl-10 pr-4 py-2.5 border border-slate-300 rounded-xl text-sm outline-none focus:ring-2 focus:ring-medical-500">
+                </div>
+                <select id="directory-province-filter" onchange="updateDistrictOptions(); filterDirectory()" class="border border-slate-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-medical-500"><option value="all">ทุกจังหวัด</option></select>
+                <select id="directory-district-filter" onchange="filterDirectory()" class="border border-slate-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-medical-500"><option value="all">ทุกอำเภอ</option></select>
+                <select id="directory-type-filter" onchange="filterDirectory()" class="border border-slate-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-medical-500"><option value="all">ทุกประเภทความช่วยเหลือ</option></select>
+            </div>
+
+            <!-- Directory Cards Grid -->
+            <div id="directory-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Directory items populated by JavaScript -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal for Detail Guide view -->
+    <div id="guide-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl relative">
+            <button onclick="closeGuideModal()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-600 p-2 rounded-full hover:bg-slate-100">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <div id="guide-modal-body">
+                <!-- Dynamic Content injected by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-8 border-t border-slate-800 mt-12 text-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
+            <p class="font-medium text-slate-300">ศูนย์ช่วยเหลือและดูแลผู้ป่วยติดเตียง (Bedridden Patient Care & Assistance Center)</p>
+            <p class="text-xs text-slate-500">สร้างขึ้นเพื่อสาธารณประโยชน์และการเข้าถึงข้อมูลสวัสดิการผู้ป่วยติดเตียงอย่างรวดเร็วและเท่าเทียม</p>
+            <div class="flex justify-center gap-4 text-xs text-slate-400 pt-2">
+                <span>สายด่วนฉุกเฉิน: <strong class="text-red-400">1669</strong></span> | 
+                <span>สปสช.: <strong class="text-sky-400">1330</strong></span> | 
+                <span>กระทรวง พม.: <strong class="text-amber-400">1300</strong></span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Sample Directory Data
+        const directoryData = [
+            {
+                        "name": "กองทุนฟื้นฟูสมรรถภาพจังหวัดสงขลา (อบจ.สงขลา)",
+                        "region": "ภาคใต้",
+                        "province": "สงขลา",
+                        "district": "ทุกอำเภอ",
+                        "address": "เริ่มติดต่อโรงพยาบาลใกล้บ้านก่อน หากไม่มีอุปกรณ์ให้ประสานกองทุน",
+                        "phone": "074-890971 ต่อ 351 / 063-079-9544",
+                        "tag": "ระดับจังหวัด",
+                        "help": "ยืม-คืนเตียง รถเข็น กายอุปกรณ์ อุปกรณ์ฟื้นฟู ปรับสภาพบ้าน",
+                        "target": "คนพิการ ผู้สูงอายุ ผู้ป่วยติดบ้านติดเตียง ผู้มีภาวะพึ่งพิง",
+                        "source": "https://kongthun.songkhlapao.go.th/frontpage/index.php?page=questions"
+            },
+            {
+                        "name": "ธนาคารสร้างสุขชุมชน",
+                        "region": "ภาคใต้",
+                        "province": "สงขลา",
+                        "district": "ทุกอำเภอ",
+                        "address": "438/51 ม.2 ต.พะวง อ.เมือง; เครือข่าย รพ.รัฐ 17 แห่ง ครอบคลุม 16 อำเภอ",
+                        "phone": "063-079-9544",
+                        "tag": "ธนาคารอุปกรณ์",
+                        "help": "ยืม-คืนกายอุปกรณ์/เครื่องช่วยความพิการเพื่อฟื้นฟูที่บ้าน",
+                        "target": "ผู้สูงอายุติดบ้านติดเตียง คนพิการ ผู้มีภาวะพึ่งพิง",
+                        "source": "https://kongthun.songkhlapao.go.th/frontpage/index.php?page=service&serviceid=15"
+            },
+            {
+                        "name": "ธนาคารอุปกรณ์มูลค่าสูง จังหวัดสงขลา",
+                        "region": "ภาคใต้",
+                        "province": "สงขลา",
+                        "district": "ทุกอำเภอ",
+                        "address": "ศูนย์บริบาลผู้สูงอายุ อบจ.สงขลา ต.พะวง",
+                        "phone": "063-079-9544",
+                        "tag": "ธนาคารอุปกรณ์",
+                        "help": "อุปกรณ์เครื่องช่วยความพิการมูลค่าสูง",
+                        "target": "คนพิการ ผู้สูงอายุ ผู้ป่วยกึ่งเฉียบพลัน ผู้มีภาวะพึ่งพิง",
+                        "source": "https://kongthun.songkhlapao.go.th/frontpage/index.php?page=service&serviceid=16"
+            },
+            {
+                        "name": "สำนักงานพัฒนาสังคมและความมั่นคงของมนุษย์จังหวัดสงขลา",
+                        "region": "ภาคใต้",
+                        "province": "สงขลา",
+                        "district": "ทุกอำเภอ",
+                        "address": "ศาลากลางจังหวัดสงขลา ต.บ่อยาง อ.เมือง",
+                        "phone": "074-311188",
+                        "tag": "สังคมสงเคราะห์",
+                        "help": "ประสานสิทธิสวัสดิการ/ความช่วยเหลือทางสังคม",
+                        "target": "ผู้ป่วยยากไร้ คนพิการ ผู้สูงอายุ ครอบครัวเปราะบาง",
+                        "source": "https://songkhla.m-society.go.th/"
+            },
+            {
+                        "name": "สำนักงานเหล่ากาชาดจังหวัดสงขลา",
+                        "region": "ภาคใต้",
+                        "province": "สงขลา",
+                        "district": "ทุกอำเภอ",
+                        "address": "ควรโทรสอบถามทรัพยากร/โครงการที่เปิดรับในขณะนั้น",
+                        "phone": "074-323760",
+                        "tag": "สาธารณกุศล",
+                        "help": "สอบถามการสงเคราะห์และสิ่งของช่วยเหลือตามโครงการ",
+                        "target": "ผู้ป่วย/ครอบครัวเดือดร้อน",
+                        "source": "https://www.google.com/search?q=สำนักงานเหล่ากาชาดจังหวัดสงขลา"
+            },
+            {
+                        "name": "ศูนย์ซ่อมสร้างสุขชุมชน ณ วิทยาลัยเทคนิคหาดใหญ่",
+                        "region": "ภาคใต้",
+                        "province": "สงขลา",
+                        "district": "หาดใหญ่",
+                        "address": "จ.-ส. 08.00-17.00 น.",
+                        "phone": "093-414-5088",
+                        "tag": "ซ่อมอุปกรณ์",
+                        "help": "ซ่อมเตียง รถเข็น วีลแชร์ ไม้เท้า และกายอุปกรณ์",
+                        "target": "ผู้มีความจำเป็นใช้อุปกรณ์",
+                        "source": "https://kongthun.songkhlapao.go.th/frontpage/index.php?page=questions"
+            },
+            {
+                        "name": "ศูนย์ซ่อมสร้างสุขชุมชน ณ วิทยาลัยการอาชีพนาทวี",
+                        "region": "ภาคใต้",
+                        "province": "สงขลา",
+                        "district": "นาทวี",
+                        "address": "จ.-ศ. 08.30-16.30 น.",
+                        "phone": "063-179-4424 / 087-476-7891",
+                        "tag": "ซ่อมอุปกรณ์",
+                        "help": "ซ่อมเตียง รถเข็น วีลแชร์ ไม้เท้า และกายอุปกรณ์",
+                        "target": "ผู้มีความจำเป็นใช้อุปกรณ์",
+                        "source": "https://kongthun.songkhlapao.go.th/frontpage/index.php?page=questions"
+            },
+            {
+                        "name": "ศูนย์ซ่อมสร้างสุขชุมชน เทศบาลเมืองสะเดา",
+                        "region": "ภาคใต้",
+                        "province": "สงขลา",
+                        "district": "สะเดา",
+                        "address": "ศูนย์เรียนรู้สู่อาเซียน เทศบาลเมืองสะเดา",
+                        "phone": "064-612-6488",
+                        "tag": "ซ่อม/รับบริจาค",
+                        "help": "ซ่อมกายอุปกรณ์ รับบริจาคอุปกรณ์มือหนึ่ง/มือสอง",
+                        "target": "คนพิการ ผู้สูงอายุ ผู้มีภาวะพึ่งพิง",
+                        "source": "https://kongthun.songkhlapao.go.th/frontpage/index.php?page=service&serviceid=12"
+            },
+            {
+                        "name": "ศูนย์ซ่อมสร้างสุขชุมชน อบต.สนามชัย",
+                        "region": "ภาคใต้",
+                        "province": "สงขลา",
+                        "district": "สทิงพระ",
+                        "address": "อาคารศูนย์ส่งเสริมการเรียนรู้สนามชัย ม.4 ต.สนามชัย",
+                        "phone": "ผ่านกองทุน 074-890971 ต่อ 351",
+                        "tag": "ซ่อม/ประสานอุปกรณ์",
+                        "help": "ซ่อมบำรุงกายอุปกรณ์และประสานความช่วยเหลือ",
+                        "target": "คนพิการ ผู้สูงอายุ ผู้มีภาวะพึ่งพิง",
+                        "source": "https://kongthun.songkhlapao.go.th/frontpage/index.php?page=service&serviceid=27"
+            },
+            {
+                        "name": "ศูนย์สร้างสุขชุมชน รพ.สต.จะโหนง",
+                        "region": "ภาคใต้",
+                        "province": "สงขลา",
+                        "district": "จะนะ",
+                        "address": "103 ม.1 ต.จะโหนง",
+                        "phone": "086-293-9407",
+                        "tag": "ฟื้นฟูชุมชน",
+                        "help": "ฟื้นฟูสมรรถภาพ ดูแลติดบ้านติดเตียง ประสานกายอุปกรณ์",
+                        "target": "คนพิการ ผู้สูงอายุ ผู้ป่วยติดบ้านติดเตียง",
+                        "source": "https://kongthun.songkhlapao.go.th/frontpage/index.php?page=service&serviceid=11"
+            },
+            {
+                        "name": "ศูนย์สร้างสุขชุมชนตำบลตลิ่งชัน รพ.สต.บ้านตลิ่งชัน",
+                        "region": "ภาคใต้",
+                        "province": "สงขลา",
+                        "district": "จะนะ",
+                        "address": "ม.2 ต.ตลิ่งชัน",
+                        "phone": "092-284-1372 / 081-129-4034",
+                        "tag": "ฟื้นฟูชุมชน",
+                        "help": "ฟื้นฟูสมรรถภาพและดูแลติดบ้านติดเตียง",
+                        "target": "คนพิการ ผู้สูงอายุ ผู้ป่วยติดบ้านติดเตียง",
+                        "source": "https://kongthun.songkhlapao.go.th/frontpage/index.php?page=service&serviceid=28"
+            },
+            {
+                        "name": "ศูนย์สร้างสุขชุมชน อบต.ประกอบ",
+                        "region": "ภาคใต้",
+                        "province": "สงขลา",
+                        "district": "นาทวี",
+                        "address": "อบต.ประกอบ",
+                        "phone": "ผ่านกองทุน 074-890971 ต่อ 351",
+                        "tag": "ฟื้นฟูชุมชน",
+                        "help": "ฟื้นฟูสมรรถภาพในชุมชน/ประสานอุปกรณ์",
+                        "target": "คนพิการ ผู้สูงอายุ ผู้ป่วยติดบ้านติดเตียง",
+                        "source": "https://kongthun.songkhlapao.go.th/frontpage/index.php?page=service&serviceid=24"
+            },
+            {
+                        "name": "ศูนย์สร้างสุขชุมชนตำบลวังใหญ่ รพ.สต.วังใหญ่",
+                        "region": "ภาคใต้",
+                        "province": "สงขลา",
+                        "district": "เทพา",
+                        "address": "ต.วังใหญ่ อ.เทพา",
+                        "phone": "ผ่านกองทุน 074-890971 ต่อ 351",
+                        "tag": "ฟื้นฟูชุมชน",
+                        "help": "ฟื้นฟูสมรรถภาพ/ดูแลผู้ป่วยติดบ้านติดเตียง",
+                        "target": "คนพิการ ผู้สูงอายุ ผู้ป่วยติดบ้านติดเตียง",
+                        "source": "https://kongthun.songkhlapao.go.th/frontpage/index.php?page=service&serviceid=29"
+            },
+            {
+                        "name": "ศูนย์สร้างสุขชุมชน รพ.สต.ม่วงงาม",
+                        "region": "ภาคใต้",
+                        "province": "สงขลา",
+                        "district": "สิงหนคร",
+                        "address": "ต.ม่วงงาม อ.สิงหนคร",
+                        "phone": "074-802671 / 099-264-2549",
+                        "tag": "ฟื้นฟูชุมชน",
+                        "help": "ฟื้นฟูสมรรถภาพ/ดูแลผู้ป่วยติดบ้านติดเตียง",
+                        "target": "คนพิการ ผู้สูงอายุ ผู้ป่วยติดบ้านติดเตียง",
+                        "source": "https://kongthun.songkhlapao.go.th/frontpage/index.php?page=service&serviceid=9"
+            },
+            {
+                        "name": "ศูนย์สร้างสุขชุมชน เทศบาลตำบลท่าช้าง",
+                        "region": "ภาคใต้",
+                        "province": "สงขลา",
+                        "district": "บางกล่ำ",
+                        "address": "ม.17 ต.ท่าช้าง",
+                        "phone": "ติดต่อเทศบาล/รพ.บางกล่ำ/กองทุน",
+                        "tag": "ฟื้นฟู/ยืมอุปกรณ์",
+                        "help": "ฟื้นฟูสมรรถภาพและยืม-คืนกายอุปกรณ์",
+                        "target": "ผู้สูงอายุ คนพิการ ผู้มีภาวะพึ่งพิง",
+                        "source": "https://kongthun.songkhlapao.go.th/frontpage/articles.php?articleid=335&page=articles-read"
+            },
+            {
+                        "name": "ศูนย์สร้างสุขชุมชน อบต.คลองหรัง",
+                        "region": "ภาคใต้",
+                        "province": "สงขลา",
+                        "district": "นาหม่อม",
+                        "address": "ต.คลองหรัง",
+                        "phone": "ติดต่อ อบต./รพ.นาหม่อม/กองทุน",
+                        "tag": "ฟื้นฟูชุมชน",
+                        "help": "ฟื้นฟูทางกายบำบัดและประสานดูแลในชุมชน",
+                        "target": "คนพิการ ผู้สูงอายุ ผู้ป่วยติดบ้านติดเตียง",
+                        "source": "https://kongthun.songkhlapao.go.th/frontpage/index.php?articleid=404&page=articles-read"
+            },
+            {
+                        "name": "กองทุนฟื้นฟูสมรรถภาพจังหวัดระนอง / ศูนย์ยืมอุปกรณ์เครื่องช่วยความพิการฟื้นฟูสมรรถภาพที่บ้าน",
+                        "region": "ภาคใต้",
+                        "province": "ระนอง",
+                        "district": "ทุกอำเภอ",
+                        "address": "ควรติดต่อ อบจ.ระนอง/หน่วยบริการในพื้นที่เพื่อตรวจสอบศูนย์ที่ให้บริการและอุปกรณ์ที่พร้อมให้ยืม",
+                        "phone": "077-811071",
+                        "tag": "กองทุนฟื้นฟู/ศูนย์ยืมอุปกรณ์",
+                        "help": "สนับสนุนศูนย์ยืมอุปกรณ์เครื่องช่วยความพิการสำหรับการฟื้นฟูสมรรถภาพที่บ้าน",
+                        "target": "คนพิการ ผู้สูงอายุ ผู้มีภาวะพึ่งพิง และผู้ที่ต้องฟื้นฟูที่บ้าน",
+                        "source": "https://ranongpao.go.th/public/list/data/index/menu/1559"
+            },
+            {
+                        "name": "สำนักงานพัฒนาสังคมและความมั่นคงของมนุษย์จังหวัดระนอง",
+                        "region": "ภาคใต้",
+                        "province": "ระนอง",
+                        "district": "เมืองระนอง",
+                        "address": "ศาลากลางจังหวัดระนอง 999 ชั้น 2 ม.3 ถ.เพชรเกษม ต.บางริ้น อ.เมืองระนอง",
+                        "phone": "077-800128",
+                        "tag": "สังคมสงเคราะห์",
+                        "help": "ประสานสิทธิ สวัสดิการ และความช่วยเหลือทางสังคมสำหรับกลุ่มเปราะบาง",
+                        "target": "ผู้สูงอายุ คนพิการ ผู้ป่วย/ครอบครัวเปราะบาง",
+                        "source": "https://ranong.m-society.go.th/"
+            },
+            {
+                        "name": "กองทุนฟื้นฟูสมรรถภาพจังหวัดสุราษฎร์ธานี / ธนาคารกายอุปกรณ์",
+                        "region": "ภาคใต้",
+                        "province": "สุราษฎร์ธานี",
+                        "district": "ทุกอำเภอ",
+                        "address": "ตั้งอยู่ที่โรงพยาบาลองค์การบริหารส่วนจังหวัดสุราษฎร์ธานี ชั้น 4; ควรโทรตรวจสอบสิทธิและความพร้อมก่อนรับบริการ",
+                        "phone": "077-953123 ต่อ 527",
+                        "tag": "กองทุนฟื้นฟู/ธนาคารกายอุปกรณ์",
+                        "help": "สนับสนุนการเข้าถึงกายอุปกรณ์และรับบริจาคอุปกรณ์ เช่น เตียงผู้ป่วย รถเข็น วอล์กเกอร์ เครื่องผลิตออกซิเจน และผ้าอ้อม เพื่อนำไปช่วยกลุ่มเป้าหมาย",
+                        "target": "คนพิการ ผู้สูงอายุ ผู้ป่วยระยะกึ่งเฉียบพลัน และผู้มีภาวะพึ่งพิง",
+                        "source": "https://www.suratpao.go.th/qualityoflife/gallery/detail/5698/data.html"
+            },
+            {
+                        "name": "ศูนย์บริการกายอุปกรณ์ทางการแพทย์ประจำโรงพยาบาลในจังหวัดสุราษฎร์ธานี",
+                        "region": "ภาคใต้",
+                        "province": "สุราษฎร์ธานี",
+                        "district": "ทุกอำเภอ",
+                        "address": "อบจ.สุราษฎร์ธานีระบุการจัดตั้งศูนย์บริการกายอุปกรณ์ในโรงพยาบาล 20 แห่ง; การรับบริการเป็นไปตามการประเมินและขั้นตอนของแต่ละโรงพยาบาล",
+                        "phone": "ติดต่อโรงพยาบาลในพื้นที่ / 077-953123",
+                        "tag": "ศูนย์กายอุปกรณ์เครือข่ายโรงพยาบาล",
+                        "help": "ประเมินและให้ความช่วยเหลือด้านกายอุปกรณ์ทางการแพทย์ผ่านเครือข่ายโรงพยาบาลในจังหวัด",
+                        "target": "คนพิการ ผู้สูงอายุ ผู้ป่วยที่ต้องฟื้นฟู และผู้มีภาวะพึ่งพิง",
+                        "source": "https://www.suratpao.go.th/qualityoflife/gallery/detail/1849"
+            },
+            {
+                        "name": "สำนักงานพัฒนาสังคมและความมั่นคงของมนุษย์จังหวัดสุราษฎร์ธานี",
+                        "region": "ภาคใต้",
+                        "province": "สุราษฎร์ธานี",
+                        "district": "เมืองสุราษฎร์ธานี",
+                        "address": "39/7 ม.9 ต.ขุนทะเล อ.เมืองสุราษฎร์ธานี จ.สุราษฎร์ธานี 84100",
+                        "phone": "077-355080-1",
+                        "tag": "สังคมสงเคราะห์",
+                        "help": "ประสานสิทธิ สวัสดิการ และความช่วยเหลือทางสังคมสำหรับกลุ่มเปราะบาง",
+                        "target": "ผู้สูงอายุ คนพิการ ผู้ป่วย/ครอบครัวเปราะบาง",
+                        "source": "https://suratthani.m-society.go.th/elementor-514/"
+            },
+            {
+                        "name": "กองทุนฟื้นฟูสมรรถภาพจังหวัดชุมพร (อบจ.ชุมพร)",
+                        "region": "ภาคใต้",
+                        "province": "ชุมพร",
+                        "district": "ทุกอำเภอ",
+                        "address": "พบหลักฐาน อบจ.ชุมพรเรื่องการประชุมกองทุนต่อเนื่อง; รายละเอียดอุปกรณ์เฉพาะควรตรวจสอบกับกองทุน/รพ.สต.ก่อน",
+                        "phone": "ติดต่อ อบจ.ชุมพร/รพ.สต.ในพื้นที่",
+                        "tag": "กองทุนฟื้นฟู",
+                        "help": "สนับสนุนระบบบริการฟื้นฟูสมรรถภาพสำหรับคนพิการ ผู้สูงอายุ ผู้ป่วยระยะกึ่งเฉียบพลัน และผู้มีภาวะพึ่งพิง",
+                        "target": "คนพิการ ผู้สูงอายุ ผู้ป่วยระยะกึ่งเฉียบพลัน ผู้มีภาวะพึ่งพิง",
+                        "source": "https://www.chppao.go.th/gallery/detail/1191"
+            },
+            {
+                        "name": "สำนักงานพัฒนาสังคมและความมั่นคงของมนุษย์จังหวัดชุมพร",
+                        "region": "ภาคใต้",
+                        "province": "ชุมพร",
+                        "district": "เมืองชุมพร",
+                        "address": "ศาลากลางจังหวัดชุมพร ถ.ไตรรัตน์ ต.นาชะอัง อ.เมืองชุมพร",
+                        "phone": "077-511710",
+                        "tag": "สังคมสงเคราะห์",
+                        "help": "ประสานสิทธิ สวัสดิการ และความช่วยเหลือทางสังคมสำหรับกลุ่มเปราะบาง",
+                        "target": "ผู้สูงอายุ คนพิการ ผู้ป่วย/ครอบครัวเปราะบาง",
+                        "source": "https://chumphon.m-society.go.th/"
+            },
+            {
+                        "name": "กองทุนฟื้นฟูสมรรถภาพระดับจังหวัดพังงา / ระบบ LTC",
+                        "region": "ภาคใต้",
+                        "province": "พังงา",
+                        "district": "ทุกอำเภอ",
+                        "address": "หลักฐานการดำเนินงานระดับจังหวัดร่วม อบจ.-สปสช.; สิทธิและบริการจริงขึ้นกับการประเมินและพื้นที่",
+                        "phone": "ติดต่อ อบจ.พังงา 076-481484",
+                        "tag": "กองทุนฟื้นฟู/LTC",
+                        "help": "สนับสนุนการฟื้นฟูและการดูแลผู้มีภาวะพึ่งพิง; มีตัวอย่างการปรับสภาพที่อยู่อาศัย การดูแลโดย Care giver และการสนับสนุนผ้าอ้อมในพื้นที่",
+                        "target": "ผู้สูงอายุ คนพิการ ผู้ป่วยติดเตียง/ผู้มีภาวะพึ่งพิง",
+                        "source": "https://www.hfocus.org/content/2024/07/30982"
+            },
+            {
+                        "name": "สำนักงานพัฒนาสังคมและความมั่นคงของมนุษย์จังหวัดพังงา",
+                        "region": "ภาคใต้",
+                        "province": "พังงา",
+                        "district": "เมืองพังงา",
+                        "address": "สามารถใช้สายด่วน พม. 1300 เป็นช่องทางเสริม",
+                        "phone": "076-412179 / 076-410178",
+                        "tag": "สังคมสงเคราะห์",
+                        "help": "รับเรื่องปัญหาสังคมและประสานสวัสดิการสำหรับผู้สูงอายุ คนพิการ และกลุ่มเปราะบาง",
+                        "target": "ผู้สูงอายุ คนพิการ ผู้ป่วย/ครอบครัวเปราะบาง",
+                        "source": "https://phangnga.m-society.go.th/"
+            },
+            {
+                        "name": "กองทุนฟื้นฟูสมรรถภาพจังหวัดภูเก็ต (อบจ.ภูเก็ต)",
+                        "region": "ภาคใต้",
+                        "province": "ภูเก็ต",
+                        "district": "ทุกอำเภอ",
+                        "address": "เว็บไซต์ อบจ.ภูเก็ตมีข่าวการประชุมกองทุนฟื้นฟูสมรรถภาพฯ ในปี 2568; ควรสอบถามบริการ/สิทธิรายกรณี",
+                        "phone": "ติดต่อ อบจ.ภูเก็ต",
+                        "tag": "กองทุนฟื้นฟู",
+                        "help": "สนับสนุนการขับเคลื่อนงานฟื้นฟูสมรรถภาพระดับจังหวัด",
+                        "target": "คนพิการ ผู้สูงอายุ และผู้ที่จำเป็นต้องได้รับการฟื้นฟู",
+                        "source": "https://www.phuketpao.go.th/news"
+            },
+            {
+                        "name": "สำนักงานพัฒนาสังคมและความมั่นคงของมนุษย์จังหวัดภูเก็ต",
+                        "region": "ภาคใต้",
+                        "province": "ภูเก็ต",
+                        "district": "เมืองภูเก็ต",
+                        "address": "ชั้น 2 ศาลากลางจังหวัดภูเก็ต 9/99 ถ.เจ้าฟ้า ต.ตลาดเหนือ อ.เมืองภูเก็ต",
+                        "phone": "076-212762 / 076-212726",
+                        "tag": "สังคมสงเคราะห์",
+                        "help": "ประสานสิทธิและสวัสดิการผู้สูงอายุ คนพิการ และกลุ่มเปราะบาง",
+                        "target": "ผู้สูงอายุ คนพิการ ผู้ป่วย/ครอบครัวเปราะบาง",
+                        "source": "https://phuket.m-society.go.th/"
+            },
+            {
+                        "name": "กองทุนฟื้นฟูสมรรถภาพจังหวัดกระบี่ / เครือข่าย อปท.-รพ.สต.",
+                        "region": "ภาคใต้",
+                        "province": "กระบี่",
+                        "district": "ทุกอำเภอ",
+                        "address": "ตัวอย่างหลักฐานจากเทศบาลตำบลห้วยน้ำขาวซึ่งร่วมกับกองทุนฟื้นฟูสมรรถภาพจังหวัดกระบี่; การได้รับสิทธิขึ้นกับเกณฑ์และการประเมิน",
+                        "phone": "ติดต่อ อบจ.กระบี่ 075-627111",
+                        "tag": "กองทุนฟื้นฟู/ชุมชน",
+                        "help": "มีการสนับสนุนผ้าอ้อม แผ่นรองซับ แผ่นเสริมซึมซับ และผ้าอ้อมทางเลือกผ่านพื้นที่ท้องถิ่นตามโครงการปีงบประมาณ 2569",
+                        "target": "ผู้ที่เข้าเกณฑ์โครงการในพื้นที่",
+                        "source": "https://www.huaynamkhaw.go.th/public/list/data/detail/id//menu/1559/searchdata/search/keysearch/"
+            },
+            {
+                        "name": "สำนักงานพัฒนาสังคมและความมั่นคงของมนุษย์จังหวัดกระบี่ / ศูนย์บริการคนพิการจังหวัดกระบี่",
+                        "region": "ภาคใต้",
+                        "province": "กระบี่",
+                        "district": "เมืองกระบี่",
+                        "address": "พมจ.กระบี่ ถ.ท่าเรือ ต.ไสไทย อ.เมืองกระบี่",
+                        "phone": "075-611044 / 075-623434",
+                        "tag": "สังคมสงเคราะห์/คนพิการ",
+                        "help": "ประสานสิทธิ สวัสดิการ และบริการสำหรับคนพิการ ผู้สูงอายุ และกลุ่มเปราะบาง",
+                        "target": "ผู้สูงอายุ คนพิการ ผู้ป่วย/ครอบครัวเปราะบาง",
+                        "source": "https://krabi.m-society.go.th/elementor-514/"
+            },
+            {
+                        "name": "ศูนย์ฟื้นฟูสมรรถภาพ รพ.สต.ควนธานี",
+                        "region": "ภาคใต้",
+                        "province": "ตรัง",
+                        "district": "กันตัง",
+                        "address": "แหล่งทางการ อบจ.ตรังระบุวัตถุประสงค์ของศูนย์ชัดเจน แต่ไม่ได้ระบุสต็อกอุปกรณ์ ณ ปัจจุบัน",
+                        "phone": "ติดต่อ รพ.สต.ควนธานี/อบจ.ตรัง",
+                        "tag": "ฟื้นฟูชุมชน/อุปกรณ์การแพทย์",
+                        "help": "ให้บริการฟื้นฟูสมรรถภาพและช่วยให้ผู้ป่วยเข้าถึงอุปกรณ์ทางการแพทย์ตามความจำเป็น",
+                        "target": "คนพิการ ผู้สูงอายุ ผู้ป่วยระยะกึ่งเฉียบพลัน ผู้มีภาวะพึ่งพิง",
+                        "source": "https://www.trangpao.go.th/news/detail/11656"
+            },
+            {
+                        "name": "สำนักงานพัฒนาสังคมและความมั่นคงของมนุษย์จังหวัดตรัง",
+                        "region": "ภาคใต้",
+                        "province": "ตรัง",
+                        "district": "เมืองตรัง",
+                        "address": "ศาลากลางจังหวัด ถนนพัทลุง ต.ทับเที่ยง อ.เมืองตรัง",
+                        "phone": "075-218366 / 1300",
+                        "tag": "สังคมสงเคราะห์",
+                        "help": "ประสานสิทธิ สวัสดิการ และขอรับบริการตามภารกิจกระทรวง พม.; สายด่วน 1300 สำหรับปัญหาสังคม",
+                        "target": "ผู้สูงอายุ คนพิการ ผู้ป่วย/ครอบครัวเปราะบาง",
+                        "source": "https://trang.m-society.go.th/"
+            },
+            {
+                        "name": "กองทุนฟื้นฟูสมรรถภาพจังหวัดสตูล ร่วมกับ สปสช.",
+                        "region": "ภาคใต้",
+                        "province": "สตูล",
+                        "district": "ทุกอำเภอ",
+                        "address": "กรณีรถเข็น เอกสาร อบจ.สตูลระบุให้ติดต่อโรงพยาบาลเพื่อประเมินและดำเนินการผ่านกองทุน; ไม่ได้หมายความว่ามีอุปกรณ์พร้อมรับทันที",
+                        "phone": "ประสานโรงพยาบาลในพื้นที่/อบจ.สตูล",
+                        "tag": "กองทุนฟื้นฟู/LTC",
+                        "help": "ดูแลผู้พิการ ผู้สูงอายุติดบ้าน และผู้ป่วยติดเตียง; มีช่องทางสนับสนุนรถเข็นผ่านโรงพยาบาลและการปรับสภาพบ้านบางรายการ เช่น ราวจับ ตามเกณฑ์",
+                        "target": "ผู้พิการ ผู้สูงอายุติดบ้าน ผู้ป่วยติดเตียง",
+                        "source": "https://satunpao.go.th/uploads/news-docs/1767668050249-124560794.pdf"
+            },
+            {
+                        "name": "ระบบหมอเยี่ยมบ้านและกองทุนฟื้นฟูสมรรถภาพทางการแพทย์ อบจ.สตูล",
+                        "region": "ภาคใต้",
+                        "province": "สตูล",
+                        "district": "ทุกอำเภอ",
+                        "address": "เป็นนโยบาย/ภารกิจที่ปรากฏในเอกสารอัตรากำลังของ อบจ.สตูล; การได้รับอุปกรณ์จริงต้องผ่านหน่วยบริการและเกณฑ์พื้นที่",
+                        "phone": "ประสานหน่วยบริการในพื้นที่/อบจ.สตูล",
+                        "tag": "Home Care/ฟื้นฟู",
+                        "help": "พัฒนาระบบหมอเยี่ยมบ้านและสนับสนุนกองทุนฟื้นฟูเพื่อจัดหาอุปกรณ์ฟื้นฟูทางการแพทย์แก่ผู้พิการ ผู้ป่วยติดเตียง และผู้สูงอายุที่อยู่ลำพัง",
+                        "target": "ผู้พิการ ผู้ป่วยติดเตียง ผู้สูงอายุที่อยู่ลำพัง",
+                        "source": "https://satunpao.go.th/uploads/news-docs/1749020890639-645682095.pdf"
+            },
+            {
+                        "name": "กองทุนฟื้นฟูสมรรถภาพจังหวัดนครศรีธรรมราช / ศูนย์สุขใจใกล้บ้าน",
+                        "region": "ภาคใต้",
+                        "province": "นครศรีธรรมราช",
+                        "district": "ทุกอำเภอ",
+                        "address": "หลักฐานปี 2569 ระบุการขยายศูนย์สุขใจใกล้บ้านและสนับสนุนซ่อมอุปกรณ์; ควรตรวจสอบหน่วยบริการใกล้บ้านและความพร้อมรายกรณี",
+                        "phone": "ประสาน อบจ.นครศรีธรรมราช/รพ.สต.ในพื้นที่",
+                        "tag": "กองทุนฟื้นฟู/ฟื้นฟูชุมชน",
+                        "help": "สนับสนุนศูนย์ฟื้นฟูใกล้บ้าน การฟื้นฟูในชุมชน การปรับสภาพบ้าน และการซ่อมบำรุงอุปกรณ์เครื่องช่วยความพิการ",
+                        "target": "คนพิการ ผู้สูงอายุ ผู้ป่วยระยะกึ่งเฉียบพลัน ผู้มีภาวะพึ่งพิง",
+                        "source": "https://www.hfocus.org/content/2026/09/39488"
+            },
+            {
+                        "name": "สำนักงานพัฒนาสังคมและความมั่นคงของมนุษย์จังหวัดนครศรีธรรมราช / ศูนย์บริการคนพิการ",
+                        "region": "ภาคใต้",
+                        "province": "นครศรีธรรมราช",
+                        "district": "พระพรหม",
+                        "address": "132 ม.6 ต.นาพรุ อ.พระพรหม จ.นครศรีธรรมราช",
+                        "phone": "075-356165 / ศูนย์บริการคนพิการ 075-356259",
+                        "tag": "สังคมสงเคราะห์/คนพิการ",
+                        "help": "ประสานสิทธิ สวัสดิการ และบริการสำหรับคนพิการ ผู้สูงอายุ และกลุ่มเปราะบาง",
+                        "target": "ผู้สูงอายุ คนพิการ ผู้ป่วย/ครอบครัวเปราะบาง",
+                        "source": "https://nakhonsithammarat.m-society.go.th/elementor-514/"
+            },
+            {
+                        "name": "กองทุนฟื้นฟูสมรรถภาพจังหวัดพัทลุง",
+                        "region": "ภาคใต้",
+                        "province": "พัทลุง",
+                        "district": "ทุกอำเภอ",
+                        "address": "เอกสารปี 2569 ของ อบจ.พัทลุงระบุโครงการยืมอุปกรณ์ทางการแพทย์ 5 รายการ; ความพร้อมจริงต้องตรวจสอบก่อนรับบริการ",
+                        "phone": "074-611603",
+                        "tag": "กองทุนฟื้นฟู/อุปกรณ์",
+                        "help": "จัดบริการฟื้นฟูและจัดหา/ซ่อมอุปกรณ์เครื่องช่วยความพิการ รวมทั้งมีโครงการจัดบริการให้ยืมอุปกรณ์ทางการแพทย์ที่จำเป็นสำหรับผู้มีสิทธิได้รับการฟื้นฟู",
+                        "target": "คนพิการ ผู้สูงอายุ ผู้ป่วยระยะกึ่งเฉียบพลัน ผู้มีภาวะพึ่งพิง",
+                        "source": "https://www.ptlocal.go.th/files/com_news/2026-02/20260213_ciofomnr.pdf"
+            },
+            {
+                        "name": "โรงพยาบาลยะลา ร่วมกองทุนฟื้นฟูสมรรถภาพจังหวัดยะลา",
+                        "region": "ภาคใต้",
+                        "province": "ยะลา",
+                        "district": "เมืองยะลา",
+                        "address": "มี MOU ระหว่างโรงพยาบาลยะลากับ อบจ.ยะลา; ควรตรวจสอบขั้นตอนและความพร้อมของอุปกรณ์ก่อนรับบริการ",
+                        "phone": "ติดต่อโรงพยาบาลยะลา",
+                        "tag": "ศูนย์ยืม-คืน/ซ่อมอุปกรณ์",
+                        "help": "จัดตั้งศูนย์ยืม-คืนอุปกรณ์ทางการแพทย์และอุปกรณ์เครื่องช่วยความพิการ และซ่อมอุปกรณ์เครื่องช่วยคนพิการ",
+                        "target": "ผู้ป่วยและคนพิการที่มีความจำเป็นด้านการฟื้นฟู",
+                        "source": "https://yalahospital.go.th/yrhweb/index.php"
+            },
+            {
+                        "name": "ศูนย์ปันสุขชุมชน กองทุนฟื้นฟูสมรรถภาพจังหวัดนราธิวาส",
+                        "region": "ภาคใต้",
+                        "province": "นราธิวาส",
+                        "district": "ทุกอำเภอ",
+                        "address": "อบจ.นราธิวาสระบุศูนย์ 14 แห่ง ครบ 13 อำเภอ; ควรตรวจสอบสต็อกก่อน",
+                        "phone": "073-517950 ถึง 52",
+                        "tag": "ศูนย์ยืม-คืนกายอุปกรณ์/ฟื้นฟู",
+                        "help": "ยืม-คืนกายอุปกรณ์และเครื่องช่วยความพิการเพื่อฟื้นฟูต่อเนื่องที่บ้าน ผ่านเครือข่าย 14 ศูนย์ ครอบคลุม 13 อำเภอ",
+                        "target": "คนพิการ ผู้สูงอายุติดบ้านติดเตียง ผู้ป่วยหลังระยะกึ่งเฉียบพลัน ผู้มีภาวะพึ่งพิง",
+                        "source": "https://www.narathiwatpao.go.th/rehabilitation-fund/"
+            },
+            {
+                        "name": "ศูนย์ปันสุขชุมชน ศูนย์สุขภาพชุมชนเมืองกำปงบารู",
+                        "region": "ภาคใต้",
+                        "province": "นราธิวาส",
+                        "district": "เมืองนราธิวาส",
+                        "address": "ไม่ควรตีความว่าอุปกรณ์ทุกชิ้นมีพร้อมตลอดเวลา ต้องตรวจสอบกับศูนย์ก่อน",
+                        "phone": "073-517950 ถึง 52 (อบจ.นราธิวาส)",
+                        "tag": "ศูนย์ยืม-คืนอุปกรณ์",
+                        "help": "มีอุปกรณ์ให้ยืมตามโครงการ ได้แก่ เตียงผู้ป่วย 3 ไกร์ เบาะลมไฟฟ้า วีลแชร์ ไม้ค้ำยัน และไม้เท้า 4 ขา",
+                        "target": "ผู้มีสิทธิทุกสิทธิที่เข้าเกณฑ์โครงการและต้องการอุปกรณ์เพื่อการฟื้นฟู",
+                        "source": "https://www.narathiwatpao.go.th/project-and-events-of-rehabilitation-fund/%E0%B8%AD%E0%B8%9A%E0%B8%88-%E0%B8%99%E0%B8%A3%E0%B8%B2%E0%B8%98%E0%B8%B4%E0%B8%A7%E0%B8%B2%E0%B8%AA-%E0%B9%80%E0%B8%9B%E0%B8%B4%E0%B8%94-%E0%B8%A8%E0%B8%B9%E0%B8%99%E0%B8%A2%E0%B9%8C%E0%B8%9B/"
+            },
+            {
+                        "name": "กองทุนฟื้นฟูสมรรถภาพจังหวัดปัตตานี",
+                        "region": "ภาคใต้",
+                        "province": "ปัตตานี",
+                        "district": "ทุกอำเภอ",
+                        "address": "ฐานโครงการกองทุนสุขภาพจังหวัดระบุโครงการฟื้นฟูสมรรถภาพในชุมชนของโรงพยาบาล 12 แห่ง; ศูนย์ปันสุขปี 2569 มีหลักฐานการจัดซื้อ แต่ยังไม่ระบุว่าอุปกรณ์พร้อมให้ยืม",
+                        "phone": "ประสาน อบจ.ปัตตานี/โรงพยาบาลในพื้นที่",
+                        "tag": "กองทุนฟื้นฟู/ฟื้นฟูชุมชน",
+                        "help": "สนับสนุนการฟื้นฟูสมรรถภาพทางการแพทย์ในชุมชนผ่านเครือข่ายโรงพยาบาล และมีการพัฒนาศูนย์ยืม-คืนปันสุข",
+                        "target": "คนพิการ ผู้สูงอายุ ผู้ป่วย/ผู้มีภาวะพึ่งพิงที่ต้องฟื้นฟู",
+                        "source": "https://phfthai.com/project/report/name"
+            }
+];
+
+        // Sample Initial Reminders
+        let reminders = [
+            { id: 1, title: "พลิกตัวนอนตะแคงซ้าย (ป้องกันแผลกดทับ)", category: "turning", time: "08:00", done: false },
+            { id: 2, title: "ให้อาหารทางสายยาง มื้อเช้า", category: "feeding", time: "08:30", done: false },
+            { id: 3, title: "ป้อนยาหลังอาหารเช้า", category: "medicine", time: "09:00", done: false },
+            { id: 4, title: "พลิกตัวนอนตะแคงขวา", category: "turning", time: "10:00", done: false }
+        ];
+
+        // Search Data Index
+        const searchableItems = [
+            { title: "ขอรับผ้าอ้อมผู้ใหญ่ฟรี 3 ชิ้น/วัน", section: "rights", desc: "โครงการ สปสช. แจกผ้าอ้อมผู้ใหญ่ฟรีสำหรับผู้ป่วยติดเตียงที่มี ADL ไม่เกิน 6 คะแนน" },
+            { title: "ขั้นตอนการยืมเตียงผู้ป่วยและเครื่องผลิตออกซิเจน", section: "supplies", desc: "แบบฟอร์มขอยืมอุปกรณ์ทางการแพทย์ฟรี ส่งตรงถึงบ้าน" },
+            { title: "เทคนิคการพลิกตัวและทำแผลกดทับ", section: "guides", desc: "แนวทางเปลี่ยนท่า ลดแรงกด และสังเกตผิวหนังเพื่อป้องกันแผลกดทับ" },
+            { title: "สายด่วนเจ็บป่วยฉุกเฉิน 1669", section: "directory", desc: "เบอร์โทรฉุกเฉินกู้ชีพฟรีตลอด 24 ชั่วโมง" },
+            { title: "เบี้ยความพิการ 800 - 1,000 บาท", section: "rights", desc: "การทำบัตรคนพิการทางการเคลื่อนไหวสำหรับผู้ป่วยติดเตียง" },
+            { title: "การให้อาหารทางสายยางและการดูดเสมหะ", section: "guides", desc: "การจัดท่าระหว่างให้อาหารทางสาย การสังเกตอาการผิดปกติ และหลักความปลอดภัย" }
+        ];
+
+        window.onload = function() {
+            lucide.createIcons();
+            updateClock();
+            setInterval(updateClock, 1000);
+            renderReminders();
+            initializeDirectoryFilters();
+            renderDirectory(directoryData);
+        };
+
+        // Realtime Clock Function
+        function updateClock() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const clockEl = document.getElementById('current-clock');
+            if (clockEl) clockEl.innerText = 'เวลาปัจจุบัน: ' + timeString + ' น.';
+            
+            // Check alarms
+            const currentShortTime = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+            reminders.forEach(rem => {
+                if (rem.time === currentShortTime && !rem.alerted) {
+                    rem.alerted = true;
+                    showNotification(rem.title);
+                }
+            });
+        }
+
+        function showNotification(title) {
+            if ("Notification" in window && Notification.permission === "granted") {
+                new Notification("ถึงเวลาดูแลผู้ป่วย!", { body: title, icon: "https://cdn-icons-png.flaticon.com/512/2966/2966327.png" });
+            } else {
+                alert("🔔 ถึงเวลาดูแลผู้ป่วย: " + title);
+            }
+        }
+
+        // Request Browser Notification Permission
+        if ("Notification" in window && Notification.permission !== "granted") {
+            Notification.requestPermission();
+        }
+
+        // Navigation Tab Switcher
+        function switchTab(tabId) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('tab-active'));
+
+            // Show selected tab
+            const targetSection = document.getElementById('section-' + tabId);
+            if (targetSection) targetSection.classList.remove('hidden');
+
+            const activeNav = document.getElementById('nav-' + tabId);
+            if (activeNav) activeNav.classList.add('tab-active');
+
+            // Close mobile menu if open
+            document.getElementById('mobile-menu').classList.add('hidden');
+
+            // Scroll to top smooth
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Accessibility Font Size Changer
+        function changeFontSize(size) {
+            const body = document.body;
+            if (size === 'small') {
+                body.style.fontSize = '14px';
+            } else if (size === 'normal') {
+                body.style.fontSize = '16px';
+            } else if (size === 'large') {
+                body.style.fontSize = '19px';
+            }
+        }
+
+        function handleGlobalSearch(query) {
+            if (!query.trim()) {
+                closeSearchResults();
+                return;
+            }
+        }
+
+        function performGlobalSearch() {
+            const query = document.getElementById('global-search').value.trim().toLowerCase();
+            if (!query) return;
+
+            const resultsPanel = document.getElementById('search-results-panel');
+            const resultsList = document.getElementById('search-results-list');
+            const keywordDisplay = document.getElementById('search-keyword-display');
+
+            keywordDisplay.innerText = query;
+            resultsList.innerHTML = '';
+
+            const matched = searchableItems.filter(item => 
+                item.title.toLowerCase().includes(query) || item.desc.toLowerCase().includes(query)
+            );
+
+            if (matched.length === 0) {
+                resultsList.innerHTML = `<div class="p-4 bg-white rounded-xl text-slate-500 font-medium">ไม่พบข้อมูลที่ตรงกับคำค้นหา ลองค้นหาด้วยคำอื่น เช่น "ผ้าอ้อม", "แผลกดทับ", "สายด่วน"</div>`;
+            } else {
+                matched.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = "p-4 bg-white rounded-xl hover:bg-slate-50 cursor-pointer border border-slate-200 transition";
+                    div.onclick = () => {
+                        switchTab(item.section);
+                        closeSearchResults();
+                    };
+                    div.innerHTML = `
+                        <h4 class="font-bold text-medical-700 text-base mb-1">${item.title}</h4>
+                        <p class="text-sm text-slate-600">${item.desc}</p>
+                    `;
+                    resultsList.appendChild(div);
+                });
+            }
+
+            resultsPanel.classList.remove('hidden');
+        }
+
+        function closeSearchResults() {
+            document.getElementById('search-results-panel').classList.add('hidden');
+        }
+
+        function switchSupplySubTab(tabNum) {
+            for (let i = 1; i <= 3; i++) {
+                document.getElementById(`supply-content-${i}`).classList.add('hidden');
+                document.getElementById(`supply-tab-${i}`).className = "pb-3 font-bold text-slate-500 border-b-2 border-transparent hover:text-medical-600 flex items-center gap-2";
+            }
+            document.getElementById(`supply-content-${tabNum}`).classList.remove('hidden');
+            document.getElementById(`supply-tab-${tabNum}`).className = "pb-3 font-bold text-medical-600 border-b-2 border-medical-600 flex items-center gap-2";
+        }
+
+        function requestSupplyItem(itemName) {
+            switchSupplySubTab(2);
+            document.getElementById('request-item-select').value = itemName;
+        }
+
+        function handleSupplySubmit(e) {
+            e.preventDefault();
+            alert("บันทึกการส่งแบบฟอร์มเรียบร้อยแล้ว! เจ้าหน้าที่หรือศูนย์ช่วยเหลือในพื้นที่จะติดต่อกลับหาท่านโดยเร็วที่สุด");
+            e.target.reset();
+        }
+
+        // Reminders Logic
+        function addReminder(e) {
+            e.preventDefault();
+            const title = document.getElementById('rem-title').value;
+            const category = document.getElementById('rem-category').value;
+            const time = document.getElementById('rem-time').value;
+
+            const newRem = {
+                id: Date.now(),
+                title: title,
+                category: category,
+                time: time,
+                done: false
+            };
+
+            reminders.push(newRem);
+            reminders.sort((a, b) => a.time.localeCompare(b.time));
+            renderReminders();
+            e.target.reset();
+        }
+
+        function toggleReminder(id) {
+            const rem = reminders.find(r => r.id === id);
+            if (rem) {
+                rem.done = !rem.done;
+                renderReminders();
+            }
+        }
+
+        function deleteReminder(id) {
+            reminders = reminders.filter(r => r.id !== id);
+            renderReminders();
+        }
+
+        function renderReminders() {
+            const listEl = document.getElementById('reminder-list');
+            listEl.innerHTML = '';
+
+            if (reminders.length === 0) {
+                listEl.innerHTML = '<p class="text-slate-400 text-sm italic">ยังไม่มีรายการแจ้งเตือน</p>';
+                return;
+            }
+
+            reminders.forEach(rem => {
+                const div = document.createElement('div');
+                div.className = `p-4 rounded-xl border flex justify-between items-center transition ${rem.done ? 'bg-slate-100 border-slate-200 opacity-60' : 'bg-amber-50/50 border-amber-200'}`;
+                
+                div.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <button onclick="toggleReminder(${rem.id})" class="p-1.5 rounded-lg border ${rem.done ? 'bg-emerald-500 text-white border-emerald-500' : 'bg-white border-slate-300 text-transparent'}">
+                            <i data-lucide="check" class="w-4 h-4"></i>
+                        </button>
+                        <div>
+                            <span class="font-bold text-slate-800 text-base ${rem.done ? 'line-through text-slate-500' : ''}">${rem.title}</span>
+                            <div class="flex items-center gap-2 mt-0.5 text-xs text-slate-500">
+                                <span class="bg-white px-2 py-0.5 rounded border font-medium text-slate-600">${rem.time} น.</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="deleteReminder(${rem.id})" class="text-slate-400 hover:text-red-500 p-2">
+                        <i data-lucide="trash-2" class="w-5 h-5"></i>
+                    </button>
+                `;
+                listEl.appendChild(div);
+            });
+            lucide.createIcons();
+        }
+
+        // Directory Search & Filter
+        function renderDirectory(data) {
+            const grid = document.getElementById('directory-grid');
+            grid.innerHTML = '';
+
+            data.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between";
+                card.innerHTML = `
+                    <div>
+                        <span class="bg-blue-100 text-blue-700 text-xs px-2.5 py-0.5 rounded-full font-bold mb-2 inline-block">${item.tag}</span>
+                        <h4 class="font-bold text-lg text-slate-800 mb-1">${item.name}</h4>
+                        <p class="text-xs text-slate-500 mb-3 flex items-start gap-1">
+                            <i data-lucide="map-pin" class="w-4 h-4 flex-shrink-0 mt-0.5"></i> ${item.address}
+                        </p>
+                    </div>
+                    <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+                        <span class="text-xs font-bold text-slate-500">พื้นที่: ${item.region}</span>
+                        <a href="tel:${item.phone}" class="bg-medical-600 hover:bg-medical-700 text-white text-xs px-3 py-1.5 rounded-lg font-bold flex items-center gap-1">
+                            <i data-lucide="phone" class="w-3.5 h-3.5"></i> ${item.phone}
+                        </a>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        function initializeDirectoryFilters() {
+            const p=document.getElementById('directory-province-filter'), t=document.getElementById('directory-type-filter');
+            [...new Set(directoryData.map(x=>x.province).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'th')).forEach(v=>p.insertAdjacentHTML('beforeend',`<option value="${v}">${v}</option>`));
+            [...new Set(directoryData.map(x=>x.tag).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'th')).forEach(v=>t.insertAdjacentHTML('beforeend',`<option value="${v}">${v}</option>`));
+            updateDistrictOptions();
+        }
+        function updateDistrictOptions() {
+            const p=document.getElementById('directory-province-filter').value, d=document.getElementById('directory-district-filter');
+            d.innerHTML='<option value="all">ทุกอำเภอ</option>';
+            [...new Set(directoryData.filter(x=>p==='all'||x.province===p).map(x=>x.district).filter(x=>x&&x!=='ทุกอำเภอ'))].sort((a,b)=>a.localeCompare(b,'th')).forEach(v=>d.insertAdjacentHTML('beforeend',`<option value="${v}">${v}</option>`));
+        }
+        function filterDirectory() {
+            const q=document.getElementById('directory-search').value.toLowerCase().trim();
+            const p=document.getElementById('directory-province-filter').value, d=document.getElementById('directory-district-filter').value, t=document.getElementById('directory-type-filter').value;
+            renderDirectory(directoryData.filter(item=>{
+                const hay=[item.name,item.address,item.province,item.district,item.tag,item.help,item.target,item.phone].filter(Boolean).join(' ').toLowerCase();
+                return (!q||hay.includes(q)) && (p==='all'||item.province===p) && (d==='all'||item.district===d||item.district==='ทุกอำเภอ') && (t==='all'||item.tag===t);
+            }));
+        }
+
+        // Guide Modal Details
+        const guideDetails = {
+            'pressure-ulcer': `
+                <h2 class="text-2xl font-bold text-slate-800 mb-3">คู่มือการพลิกตัวและทำแผลกดทับ</h2>
+                <div class="space-y-4 text-slate-700 text-sm leading-relaxed">
+                    <p><strong>แผลกดทับ (Pressure Ulcers)</strong> เกิดจากแรงกดทับเป็นเวลานานจนเลือดไม่สามารถไปเลี้ยงเนื้อเยื่อได้ มักเกิดบริเวณ ปุ่มกระดูก เช่น ก้นกบ ตาตุ่ม ส้นเท้า และสะโพก</p>
+                    <h4 class="font-bold text-base text-slate-800">ขั้นตอนการเช็ดทำแผลที่ถูกต้อง:</h4>
+                    <ol class="list-decimal list-inside space-y-1 pl-2">
+                        <li>ล้างมือให้สะอาดและสวมถุงมือยางปราศจากเชื้อ</li>
+                        <li>ใช้น้ำเกลือ Normal Saline (0.9% NaCl) เช็ดล้างทำแผลอย่างเบามือ</li>
+                        <li>ซับแผลให้แห้งด้วยผ้าก๊อซสะอาด</li>
+                        <li>ปิดแผลด้วยผ้าก๊อซแห้ง หรือแผ่นปิดแผลประเภทคอลลาเจน/โฟมตามคำแนะนำของพยาบาล</li>
+                    </ol>
+                </div>
+            `,
+            'feeding': `
+                <h2 class="text-2xl font-bold text-slate-800 mb-3">คู่มือการให้อาหารทางสายยาง</h2>
+                <div class="space-y-4 text-slate-700 text-sm leading-relaxed">
+                    <p>การให้อาหารทางสายยาง (NG Tube Feeding) ต้องทำด้วยความระมัดระวังเพื่อป้องกันการสำลักเข้าปอด</p>
+                    <h4 class="font-bold text-base text-slate-800">ข้อควรปฏิบัติสำคัญ:</h4>
+                    <ul class="list-disc list-inside space-y-1 pl-2">
+                        <li>ปรับเตียงให้ศีรษะสูงอย่างน้อย 30-45 องศา เสมอ</li>
+                        <li>ก่อนให้อาหาร ให้ใช้สลิงดึงเช็กคราบอาหารเดิม หากเกิน 50 ml ให้ดันอาหารกลับคืนและชะลอการให้อาหารไปอีก 1 ชม.</li>
+                        <li>ปล่อยให้อาหารไหลตามแรงโน้มถ่วงช้าๆ ไม่ควรกระแทกสลิง</li>
+                        <li>หลังอาหารเสร็จ ให้ตามด้วยน้ำสะอาด 30-50 ml เพื่อล้างสาย และคงท่านั่งศีรษะสูงไว้อย่างน้อย 1 ชม.</li>
+                    </ul>
+                </div>
+            `,
+            'hygiene': `
+                <h2 class="text-2xl font-bold text-slate-800 mb-3">คู่มือสุขอนามัยและการขับถ่าย</h2>
+                <div class="space-y-3 text-slate-700 text-sm leading-relaxed">
+                    <p>การดูแลความสะอาดช่วยลดการติดเชื้อในระบบทางเดินปัสสาวะและการเกิดแผลกดทับ</p>
+                    <p><strong>คำแนะนำ:</strong> ควรเช็ดทำความสะอาดอวัยวะขับถ่ายทุกครั้งหลังการถ่าย ทำความสะอาดจากด้านหน้าไปด้านหลังเสมอเพื่อป้องกันแบคทีเรียย้อนกลับ และใช้ครีมทากันผื่นอับชื้น (เช่น Zinc Oxide) บริเวณขาหนีบและร่องก้น</p>
+                </div>
+            `,
+            'therapy': `
+                <h2 class="text-2xl font-bold text-slate-800 mb-3">คู่มือการทำกายภาพบำบัดเบื้องต้น</h2>
+                <div class="space-y-3 text-slate-700 text-sm leading-relaxed">
+                    <p>การบริหารข้อต่อ (Passive Range of Motion) ช่วยป้องกันข้อติดแข็งและภาวะกล้ามเนื้อลีบ</p>
+                    <p><strong>วิธีทำ:</strong> ค่อยๆ เหยียด หด และหมุนข้อต่อเบาๆ เช่น ข้อไหล่ ข้อศอก ข้อมือ ข้อสะโพก ข้อเข่า และข้อเท้า ทำช้าๆ ข้างละ 10-15 ครั้ง หากผู้ป่วยรู้สึกเจ็บให้หยุดทันที</p>
+                </div>
+            `
+        };
+
+        function openGuideModal(guideKey) {
+            const modal = document.getElementById('guide-modal');
+            const body = document.getElementById('guide-modal-body');
+            body.innerHTML = guideDetails[guideKey] || '<p>ไม่มีข้อมูล</p>';
+            modal.classList.remove('hidden');
+        }
+
+        function closeGuideModal() {
+            document.getElementById('guide-modal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
